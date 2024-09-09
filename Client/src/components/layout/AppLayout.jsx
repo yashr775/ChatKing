@@ -42,4 +42,3 @@ const AppLayout = (WrappedComponent) => {
 };
 
 export default AppLayout;
-
