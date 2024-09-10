@@ -1,4 +1,4 @@
-import { styled } from "@mui/material";
+import { styled, Skeleton, keyframes } from "@mui/material";
 
 
 const VisuallyHiddenInput = styled("input")({
@@ -13,4 +13,14 @@ const VisuallyHiddenInput = styled("input")({
     width: 1,
 });
 
-export { VisuallyHiddenInput }
+
+const bounceAnimation = keyframes`
+0% { transform: scale(1); }
+50% { transform: scale(1.5); }
+100% { transform: scale(1); }
+`;
+
+const BouncingSkeleton = styled(Skeleton)(() => ({
+    animation: `${bounceAnimation} 1s infinite`,
+}));
+export { VisuallyHiddenInput, BouncingSkeleton }
