@@ -1,4 +1,5 @@
 import { styled, Skeleton, keyframes } from "@mui/material";
+import { Link as LinkComponent } from "react-router-dom";
 
 
 const VisuallyHiddenInput = styled("input")({
@@ -23,4 +24,13 @@ const bounceAnimation = keyframes`
 const BouncingSkeleton = styled(Skeleton)(() => ({
     animation: `${bounceAnimation} 1s infinite`,
 }));
-export { VisuallyHiddenInput, BouncingSkeleton }
+
+const Link = styled(LinkComponent)`
+  text-decoration: none;
+  color: black;
+  padding: 1rem;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+`;
+export { VisuallyHiddenInput, BouncingSkeleton, Link }

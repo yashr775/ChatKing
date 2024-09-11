@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import { lazy } from "react"
 import ProtectRoute from "./components/auth/ProtectRoute"
 import { Suspense } from "react"
-import LayoutLoader from "./components/layout/Loader"
+import { LayoutLoader } from "./components/layout/Loader"
 
 const Home = lazy(() => import('./pages/Home'))
 const Login = lazy(() => import('./pages/Login'))

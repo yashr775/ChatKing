@@ -2,6 +2,7 @@
 /* eslint-disable react/prop-types */
 import {
     AppBar,
+    Backdrop,
     Badge,
     Box,
     IconButton,
@@ -134,19 +135,19 @@ const Header = () => {
                 </AppBar>
             </Box>
             {isSearch && (
-                <Suspense fallback={<div>Loading</div>}>
+                <Suspense fallback={<Backdrop open />}>
                     <SearchDialog />
                 </Suspense>
             )}
 
             {isNotification && (
-                <Suspense fallback={<div>Loading</div>}>
+                <Suspense fallback={<Backdrop open />}>
                     <NotifcationDialog />
                 </Suspense>
             )}
 
             {isNewGroup && (
-                <Suspense fallback={<div>Loading</div>}>
+                <Suspense fallback={<Backdrop open />}>
                     <NewGroupDialog />
                 </Suspense>
             )}
