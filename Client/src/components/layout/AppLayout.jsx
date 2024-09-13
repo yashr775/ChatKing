@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/display-name */
 
@@ -8,6 +9,7 @@ import ChatList from "../specific/ChatList";
 import { samepleChats } from "../../constants/sampleData";
 import { useParams } from "react-router-dom";
 import Profile from "../specific/Profile";
+import { useState } from "react";
 const AppLayout = (WrappedComponent) => {
     return (props) => {
         const params = useParams();
@@ -17,6 +19,7 @@ const AppLayout = (WrappedComponent) => {
             e.preventDefault();
             console.log(_id + " " + groupChat)
         }
+        const [onlineUsers, setOnlineUsers] = useState([]);
 
         return (
             <>
@@ -37,6 +40,7 @@ const AppLayout = (WrappedComponent) => {
                             chats={samepleChats}
                             chatId={chatId}
                             handleDeleteChat={handleDeleteChat}
+                            onlineUsers={onlineUsers}
                         />
                     </Grid>
                     <Grid item xs={12} sm={8} md={5} lg={5} height={"100%"}>

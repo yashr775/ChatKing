@@ -8,7 +8,11 @@ import { useState } from "react"
 const NewGroup = () => {
 
     const selectMemberHandler = (id) => {
-        console.log(id)
+        setSelectedMembers((prev) =>
+            prev.includes(id)
+                ? prev.filter((currElement) => currElement !== id)
+                : [...prev, id]
+        );
     }
     const [selectedMembers, setSelectedMembers] = useState([]);
     const groupName = useInputValidation("");
@@ -20,10 +24,10 @@ const NewGroup = () => {
 
     }
 
-    const isLoadingNewGroup = true
+    const isLoadingNewGroup = false
     const isLoading = false
     return (
-        <Dialog open={true}>
+        <Dialog open onClose={closeHandler}>
             <Stack p={{ xs: "1rem", sm: "3rem" }} width={"25rem"} spacing={"2rem"}>
                 <DialogTitle textAlign={"center"} variant="h4">
                     New Group
