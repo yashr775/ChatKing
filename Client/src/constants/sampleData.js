@@ -46,3 +46,34 @@ export const sampleNotifications = [
         _id: "2",
     },
 ];
+
+export const sampleMessage = [
+    {
+        attachments: [],
+        content: "gfddfggdfdfgdfgdf",
+        _id: "sfnsdjkfsdnfkjsbnd",
+        sender: {
+            _id: "1",
+            name: "Chaman ",
+        },
+        chat: "chatId",
+        createdAt: "2024-02-12T10:41:30.630Z",
+    },
+
+    {
+        attachments: [
+            {
+                public_id: "asdsad 2",
+                url: "https://www.w3schools.com/howto/img_avatar.png",
+            },
+        ],
+        content: "hjjhjhjhjhjhjhjhj",
+        _id: "sfnsdjkfsdnfkdddjsbnd",
+        sender: {
+            _id: "sdfsdfsdf",
+            name: "Chaman  2",
+        },
+        chat: "chatId",
+        createdAt: "2024-02-12T10:41:30.630Z",
+    },
+];
