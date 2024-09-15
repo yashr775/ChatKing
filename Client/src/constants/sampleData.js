@@ -77,3 +77,35 @@ export const sampleMessage = [
         createdAt: "2024-02-12T10:41:30.630Z",
     },
 ];
+
+export const myGroups = {
+    data: {
+        groups: [
+            {
+                _id: "1",
+                name: "React Enthusiasts",
+                avatar: "https://www.w3schools.com/howto/img_avatar.png", // Placeholder image
+            },
+            {
+                _id: "2",
+                name: "JavaScript Masters",
+                avatar: "https://www.w3schools.com/howto/img_avatar.png",
+            },
+            {
+                _id: "3",
+                name: "CSS Wizards",
+                avatar: "https://www.w3schools.com/howto/img_avatar.png",
+            },
+            {
+                _id: "4",
+                name: "Backend Engineers",
+                avatar: "https://www.w3schools.com/howto/img_avatar.png",
+            },
+            {
+                _id: "5",
+                name: "Frontend Developers",
+                avatar: "https://www.w3schools.com/howto/img_avatar.png",
+            },
+        ],
+    },
+};
