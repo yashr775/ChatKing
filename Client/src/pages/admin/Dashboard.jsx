@@ -1,8 +1,9 @@
+import AdminLayout from "../../components/layout/AdminLayout"
 
 
 const Dashboard = () => {
     return (
-        <div>Dashboard</div>
+        <AdminLayout><div>Dashboard</div></AdminLayout>
     )
 }
 
