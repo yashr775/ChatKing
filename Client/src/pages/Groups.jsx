@@ -51,6 +51,11 @@ const Groups = () => {
 
     const navigate = useNavigate();
 
+
+    const removeMemberHandler = () => {
+
+    }
+
     const handleMobile = () => {
         setISMobileMenuOpen((prev) => !prev);
     };
@@ -247,7 +252,7 @@ const Groups = () => {
                             boxShadow: "0 0 0.5rem  rgba(0,0,0,0.2)",
                             padding: "1rem 2rem",
                             borderRadius: "1rem",
-                        }} />))}
+                        }} handler={removeMemberHandler} />))}
 
                     </Stack>
                     {ButtonGroup}
