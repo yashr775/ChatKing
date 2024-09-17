@@ -1,8 +1,12 @@
+import AdminLayout from "../../components/layout/AdminLayout";
 
 const UserManagement = () => {
     return (
-        <div>UserManagement</div>
-    )
-}
+        <AdminLayout>
+            {" "}
+            <div>UserManagement</div>
+        </AdminLayout>
+    );
+};
 
-export default UserManagement
+export default UserManagement;

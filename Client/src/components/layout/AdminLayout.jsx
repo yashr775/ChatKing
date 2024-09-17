@@ -8,7 +8,7 @@ import {
     Grid,
     IconButton,
     Drawer,
-    styled
+    styled,
 } from "@mui/material";
 import {
     Close as CloseIcon,
@@ -17,7 +17,7 @@ import {
     ManageAccounts as ManageAccountsIcon,
     Groups as GroupsIcon,
     Message as MessageIcon,
-    ExitToApp as ExitToAppIcon
+    ExitToApp as ExitToAppIcon,
 } from "@mui/icons-material";
 import { useState } from "react";
 import { grayColor } from "../../constants/color";
@@ -60,9 +60,7 @@ const adminTabs = [
 const Sidebar = ({ w = "100%" }) => {
     const location = useLocation();
 
-    const logoutHandler = () => {
-
-    }
+    const logoutHandler = () => { };
 
     return (
         <Stack width={w} direction={"column"} p={"3rem"} spacing={"3rem"}>
@@ -81,7 +79,6 @@ const Sidebar = ({ w = "100%" }) => {
                                 ":hover": { color: "white" },
                             }
                         }
-
                     >
                         <Stack direction={"row"} alignItems={"center"} spacing={"1rem"}>
                             {tab.icon}
@@ -107,13 +104,15 @@ const isAdmin = true;
 const AdminLayout = ({ children }) => {
     const [isMobile, setIsMobile] = useState(false);
 
-    const handleMobile = () => { };
+    const handleMobile = () => {
+        setIsMobile(!isMobile);
+    };
 
     const handleClose = () => {
         setIsMobile(false);
     };
 
-    if (!isAdmin) return <Navigate to="/admin" />
+    if (!isAdmin) return <Navigate to="/admin" />;
 
     return (
         <Grid container minHeight={"100vh"}>
@@ -129,15 +128,7 @@ const AdminLayout = ({ children }) => {
                     {isMobile ? <CloseIcon /> : <MenuIcon />}
                 </IconButton>
             </Box>{" "}
-            <Grid
-                item
-                xs={12}
-                md={8}
-                lg={9}
-                sx={{
-                    bgcolor: grayColor,
-                }}
-            >
+            <Grid item md={4} lg={3} sx={{ display: { xs: "none", md: "block" } }}>
                 <Sidebar />
             </Grid>
             <Grid

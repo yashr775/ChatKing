@@ -1,9 +1,12 @@
-
+import AdminLayout from "../../components/layout/AdminLayout";
 
 const ChatManagement = () => {
     return (
-        <div>ChatManagement</div>
-    )
-}
+        <AdminLayout>
+            {" "}
+            <div>ChatManagement</div>
+        </AdminLayout>
+    );
+};
 
-export default ChatManagement
+export default ChatManagement;
