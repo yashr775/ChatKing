@@ -1,10 +1,13 @@
+/* eslint-disable react/prop-types */
 import { Container, Paper, Stack, Box, Typography } from "@mui/material";
 import AdminLayout from "../../components/layout/AdminLayout";
 import {
     AdminPanelSettings as AdminPanelSettingsIcon,
     Notifications as NotificationsIcon,
     Group as GroupIcon,
-    Person as PersonIcon
+    Person as PersonIcon,
+    Message as MessageIcon,
+
 } from "@mui/icons-material";
 import moment from "moment";
 import {
@@ -12,6 +15,7 @@ import {
     SearchField,
 } from "../../components/styles/StyledComponents";
 import { LineChart, DoughnutChart } from "../../components/specific/Charts";
+import { matBlack } from "../../constants/color";
 
 const Dashboard = () => {
     const Appbar = (
@@ -42,7 +46,30 @@ const Dashboard = () => {
         </Paper>
     );
 
-    const Widgets = <>Widgets</>;
+    const Widgets = <>
+        <Stack
+            direction={{
+                xs: "column",
+                sm: "row",
+            }}
+            spacing="2rem"
+            justifyContent="space-between"
+            alignItems={"center"}
+            margin={"2rem 0"}
+        >
+            <Widget title={"Users"} value={30} Icon={<PersonIcon />} />
+            <Widget
+                title={"Chats"}
+                value={40}
+                Icon={<GroupIcon />}
+            />
+            <Widget
+                title={"Messages"}
+                value={436}
+                Icon={<MessageIcon />}
+            />
+        </Stack>
+    </>
 
     return (
         <AdminLayout>
@@ -73,7 +100,7 @@ const Dashboard = () => {
                             Last Messages
                         </Typography>
 
-                        <LineChart />
+                        <LineChart value={[20, 64, 37, 78]} />
                     </Paper> <Paper
                         elevation={3}
                         sx={{
@@ -89,6 +116,7 @@ const Dashboard = () => {
                     >
                         <DoughnutChart
                             labels={["Single Chats", "Group Chats"]}
+                            value={[40, 60]}
 
                         />
 
@@ -110,5 +138,41 @@ const Dashboard = () => {
         </AdminLayout>
     );
 };
+
+
+const Widget = ({ title, value, Icon }) => (
+    <Paper
+        elevation={3}
+        sx={{
+            padding: "2rem",
+            margin: "2rem 0",
+            borderRadius: "1.5rem",
+            width: "20rem",
+        }}
+    >
+        <Stack alignItems={"center"} spacing={"1rem"}>
+            <Typography
+                sx={{
+                    color: "rgba(0,0,0,0.7)",
+                    borderRadius: "50%",
+                    border: `5px solid ${matBlack}`,
+                    width: "5rem",
+                    height: "5rem",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                {value}
+            </Typography>
+            <Stack direction={"row"} spacing={"1rem"} alignItems={"center"}>
+                {Icon}
+                <Typography>{title}</Typography>
+            </Stack>
+        </Stack>
+    </Paper>
+);
+
+
 
 export default Dashboard;
