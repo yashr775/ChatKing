@@ -1,8 +1,12 @@
+/* eslint-disable no-unused-vars */
 import AdminLayout from "../../components/layout/AdminLayout";
 import { Stack, Avatar } from "@mui/material";
 import AvatarCard from "../../components/shared/AvatarCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Table from "../../components/shared/Table";
+import { dashboardData as data } from "../../constants/sampleData";
+import { transformImage } from "../../lib/features";
+
 const columns = [
     {
         field: "id",
@@ -68,6 +72,24 @@ const columns = [
 
 const ChatManagement = () => {
     const [rows, setRows] = useState([]);
+
+    useEffect(() => {
+        if (data) {
+            setRows(
+                data.chats.map((i) => ({
+                    ...i,
+                    id: i._id,
+                    avatar: i.avatar.map((i) => transformImage(i, 50)),
+                    members: i.members.map((i) => transformImage(i.avatar, 50)),
+                    creator: {
+                        name: i.creator.name,
+                        avatar: transformImage(i.creator.avatar, 50),
+                    },
+                }))
+            );
+        }
+    }, [data]);
+
     return (
         <AdminLayout>
             {" "}
