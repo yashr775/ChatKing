@@ -1,5 +1,8 @@
+import { TryCatch } from "../middlewares/errors.js";
 import { User } from "../models/user.js";
-import { sendToken } from "../utils/features.js";
+import { cookieOption, sendToken } from "../utils/features.js";
+import { compare } from "bcrypt";
+import { ErrorHandler } from "../utils/utility.js";
 
 const newUser = async (req, res) => {
     const { name, username, password, bio } = req.body;
@@ -19,8 +22,43 @@ const newUser = async (req, res) => {
     sendToken(res, user, 201, "User created")
 };
 
-const login = (req, res) => {
-    res.send("Hello World");
-};
+const login = TryCatch(async (req, res, next) => {
 
-export { login, newUser };
+    const { username, password } = req.body;
+    const user = await User.findOne({ username }).select("+password");
+
+    if (!user) {
+        return next(new ErrorHandler("Invalid credentials", 404))
+    }
+
+    const isMatch = await compare(password, user.password);
+    if (!isMatch) {
+        return next(new ErrorHandler("Invalid credentials", 404))
+    }
+    return sendToken(res, user, 201, `Welcome back ${username}`)
+});
+
+const getMyProfile = TryCatch(async (req, res, next) => {
+
+    const user = await User.findById(req.user);
+
+    if (!user) return next(new ErrorHandler("User not found", 404));
+    return res.status(200).json({
+        success: true,
+        user
+    })
+
+})
+
+const logout = TryCatch(async (req, res) => {
+    return res.status(200).cookie("chatKingToken", "", { ...cookieOption, maxAge: 0 }).json({ message: "Logged out successfully" })
+})
+
+const searchUser = TryCatch((req, res) => {
+    const { name } = req.query;
+
+
+    return res.status(200).json({ success: true, name })
+})
+
+export { login, newUser, getMyProfile, logout, searchUser };

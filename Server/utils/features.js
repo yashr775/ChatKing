@@ -26,10 +26,10 @@ const connectDB = (uri) => {
 const sendToken = (res, user, code, message) => {
 
     const jwtSecret = process.env.JWT_SECRET
-    console.log(jwtSecret)
+
     const token = jwt.sign({ _id: user._id }, jwtSecret)
-    console.log(token)
+
     return res.status(code).cookie("chatKingToken", token, cookieOption).json({ success: true, message })
 }
 
-export { connectDB, sendToken }
+export { connectDB, sendToken, cookieOption }
