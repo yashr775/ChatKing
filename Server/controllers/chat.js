@@ -1,6 +1,6 @@
 import { ALERT, REFETCH_CHATS } from "../constants/event.js";
 import { TryCatch } from "../middlewares/errors.js";
-import Chat from "../models/chat.js"
+import { Chat } from "../models/chat.js"
 import { emitEvent } from "../utils/features.js";
 
 

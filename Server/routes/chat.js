@@ -1,5 +1,6 @@
-import { isAuthenticated } from "../middlewares/auth";
-import { newGroupChat } from "../routes/chat";
+import { isAuthenticated } from "../middlewares/auth.js";
+import { newGroupChat } from "../controllers/chat.js";
+import express from "express"
 
 const app = express.Router();
 
