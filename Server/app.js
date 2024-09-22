@@ -1,5 +1,6 @@
 import express from 'express'
 import userRoute from './routes/user.js'
+import chatRoute from './routes/chat.js'
 import { connectDB } from './utils/features.js';
 import dotenv from 'dotenv'
 import { errorMiddleware } from './middlewares/errors.js';
@@ -22,6 +23,7 @@ connectDB(mongoURI)
 
 
 app.use("/user", userRoute)
+app.use("/chat", chatRoute)
 
 app.get("/", (req, res) => {
     console.log("Hello world")

@@ -32,4 +32,8 @@ const sendToken = (res, user, code, message) => {
     return res.status(code).cookie("chatKingToken", token, cookieOption).json({ success: true, message })
 }
 
-export { connectDB, sendToken, cookieOption }
+const emitEvent = (req, event, users, data) => {
+    console.log("Emitting event " + event)
+}
+
+export { connectDB, sendToken, cookieOption, emitEvent }
