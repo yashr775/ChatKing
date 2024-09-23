@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3000
 
 app.use(express.json());
 app.use(cookieParser())
-createUser(10)
+
 
 connectDB(mongoURI)
 
