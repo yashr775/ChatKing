@@ -1,5 +1,5 @@
 import { isAuthenticated } from "../middlewares/auth.js";
-import { addMembers, getMyChats, getMyGroups, leaveGroup, newGroupChat, removeMember, sendAttachment } from "../controllers/chat.js";
+import { addMembers, getChatDetails, getMyChats, getMyGroups, leaveGroup, newGroupChat, removeMember, sendAttachment } from "../controllers/chat.js";
 import express from "express"
 import { attachmentMulter } from "../middlewares/multer.js";
 
@@ -21,4 +21,5 @@ app.delete("/leave/:id", leaveGroup)
 
 app.post("/message", attachmentMulter, sendAttachment)
 
+app.route("/:id").get(getChatDetails)
 export default app;
