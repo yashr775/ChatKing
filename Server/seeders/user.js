@@ -1,5 +1,6 @@
-import { faker } from "@faker-js/faker";
+import { faker, simpleFaker } from "@faker-js/faker";
 import { User } from "../models/user.js";
+
 
 const createUser = async (numUsers) => {
     try {
@@ -29,4 +30,5 @@ const createUser = async (numUsers) => {
     }
 };
 
-export { createUser };
+
+export { createUser, createGroupChats, createSingleChats, createMessages, createMessagesInAChat };

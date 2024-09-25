@@ -5,7 +5,8 @@ import { connectDB } from './utils/features.js';
 import dotenv from 'dotenv'
 import { errorMiddleware } from './middlewares/errors.js';
 import cookieParser from 'cookie-parser';
-import { createUser } from './seeders/user.js';
+import { createMessages, createMessagesInAChat } from './seeders/chat.js';
+
 
 dotenv.config({
     path: "./.env"
@@ -13,12 +14,15 @@ dotenv.config({
 
 
 const mongoURI = process.env.MONGO_URI
+
+
 const app = express();
 
 const PORT = process.env.PORT || 3000
 
 app.use(express.json());
 app.use(cookieParser())
+
 
 
 connectDB(mongoURI)

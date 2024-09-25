@@ -3,6 +3,7 @@ import {
     addMembers,
     deleteChat,
     getChatDetails,
+    getMessages,
     getMyChats,
     getMyGroups,
     leaveGroup,
@@ -29,6 +30,8 @@ app.put("/addmembers", addMembers);
 app.put("/removemember", removeMember);
 
 app.delete("/leave/:id", leaveGroup);
+
+app.get("/message/:id", getMessages)
 
 app.post("/message", attachmentMulter, sendAttachment);
 
