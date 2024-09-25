@@ -11,29 +11,35 @@ import {
     removeMember,
     renameGroup,
     sendAttachment,
+    chatIdValidator
 } from "../controllers/chat.js";
 import express from "express";
 import { attachmentMulter } from "../middlewares/multer.js";
+import { addMemberValidator, newGroupValidator, removeMemberValidator, sendAttachmentsValidator, validateHandler } from "../lib/validators.js";
 
 const app = express.Router();
 
 app.use(isAuthenticated);
 
-app.post("/new", newGroupChat);
+app.post("/new", newGroupValidator(), newGroupChat);
 
 app.get("/my", getMyChats);
 
 app.get("/my/groups", getMyGroups);
 
-app.put("/addmembers", addMembers);
+app.put("/addmembers", addMemberValidator(), addMembers);
 
-app.put("/removemember", removeMember);
+app.put("/removemember", removeMemberValidator(), removeMember);
 
 app.delete("/leave/:id", leaveGroup);
 
 app.get("/message/:id", getMessages)
 
-app.post("/message", attachmentMulter, sendAttachment);
+app.post("/message", attachmentMulter, sendAttachmentsValidator(), validateHandler, sendAttachment);
 
-app.route("/:id").get(getChatDetails).put(renameGroup).delete(deleteChat);
+app
+    .route("/:id")
+    .get(chatIdValidator(), validateHandler, getChatDetails)
+    .put(renameValidator(), validateHandler, renameGroup)
+    .delete(chatIdValidator(), validateHandler, deleteChat);
 export default app;
