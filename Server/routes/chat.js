@@ -11,11 +11,11 @@ import {
     removeMember,
     renameGroup,
     sendAttachment,
-    chatIdValidator
+
 } from "../controllers/chat.js";
 import express from "express";
 import { attachmentMulter } from "../middlewares/multer.js";
-import { addMemberValidator, newGroupValidator, removeMemberValidator, sendAttachmentsValidator, validateHandler } from "../lib/validators.js";
+import { chatIdValidator, addMemberValidator, newGroupValidator, removeMemberValidator, sendAttachmentsValidator, validateHandler, renameValidator } from "../lib/validators.js";
 
 const app = express.Router();
 
@@ -39,7 +39,6 @@ app.post("/message", attachmentMulter, sendAttachmentsValidator(), validateHandl
 
 app
     .route("/:id")
-    .get(chatIdValidator(), validateHandler, getChatDetails)
     .put(renameValidator(), validateHandler, renameGroup)
     .delete(chatIdValidator(), validateHandler, deleteChat);
 export default app;

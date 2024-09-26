@@ -3,6 +3,7 @@ import { User } from "../models/user.js";
 import { cookieOption, sendToken } from "../utils/features.js";
 import { compare } from "bcrypt";
 import { ErrorHandler } from "../utils/utility.js";
+import { Chat } from "../models/chat.js";
 
 const newUser = async (req, res) => {
     const { name, username, password, bio } = req.body;
@@ -54,11 +55,30 @@ const logout = TryCatch(async (req, res) => {
     return res.status(200).cookie("chatKingToken", "", { ...cookieOption, maxAge: 0 }).json({ message: "Logged out successfully" })
 })
 
-const searchUser = TryCatch((req, res) => {
-    const { name } = req.query;
+const searchUser = TryCatch(async (req, res) => {
+    const { name = "" } = req.query;
+
+    const myChats = await Chat.find({ groupChat: false, members: req.user });
 
 
-    return res.status(200).json({ success: true, name })
+    const allUsersFromMyChats = myChats.flatMap((chat) => chat.members);
+
+
+    const allUsersExceptMeAndFriends = await User.find({
+        _id: { $nin: allUsersFromMyChats },
+        name: { $regex: name, $options: "i" },
+    });
+
+    const users = allUsersExceptMeAndFriends.map(({ _id, name, avatar }) => ({
+        _id,
+        name,
+        avatar: avatar.url,
+    }));
+
+    return res.status(200).json({
+        success: true,
+        users,
+    });
 })
 
 export { login, newUser, getMyProfile, logout, searchUser };
