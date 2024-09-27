@@ -14,7 +14,7 @@ app.post("/login", loginValidator(), login)
 app.use(isAuthenticated)
 app.get("/me", getMyProfile)
 app.get("/logout", logout)
-app.get("/searchUser", searchUser)
+app.get("/sendrequest", searchUser)
 
 
 export default app;
