@@ -6,6 +6,7 @@ import { ErrorHandler } from "../utils/utility.js";
 import { Chat } from "../models/chat.js";
 import { Request } from "../models/request.js";
 import { NEW_REQUEST, REFETCH_CHATS } from "../constants/event.js";
+import { getOtherMember } from "../lib/helper.js";
 
 const newUser = async (req, res) => {
     const { name, username, password, bio } = req.body;
@@ -57,7 +58,7 @@ const logout = TryCatch(async (req, res) => {
         .json({ message: "Logged out successfully" });
 });
 
-const searchUser = TryCatch(async (req, res) => {
+const searchUser = TryCatch(async (req, res, next) => {
     const { name = "" } = req.query;
 
     const myChats = await Chat.find({ groupChat: false, members: req.user });
