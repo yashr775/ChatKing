@@ -3,10 +3,12 @@ import { TryCatch } from "../middlewares/errors.js";
 import { Chat } from "../models/chat.js";
 import { Message } from "../models/message.js";
 import { User } from "../models/user.js";
+import { cookieOption } from "../utils/features.js";
+import { ErrorHandler } from "../utils/utility.js";
+import jwt from "jsonwebtoken";
 
 const adminLogin = TryCatch(async (req, res, next) => {
     const { secretKey } = req.body;
-
     const isMatched = secretKey === adminSecretKey;
 
     if (!isMatched) return next(new ErrorHandler("Invalid Admin Key", 401));
@@ -15,8 +17,8 @@ const adminLogin = TryCatch(async (req, res, next) => {
 
     return res
         .status(200)
-        .cookie("chattu-admin-token", token, {
-            ...cookieOptions,
+        .cookie("chatking-admin-token", token, {
+            ...cookieOption,
             maxAge: 1000 * 60 * 15,
         })
         .json({
