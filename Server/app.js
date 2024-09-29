@@ -20,6 +20,7 @@ const mongoURI = process.env.MONGO_URI
 const app = express();
 
 const PORT = process.env.PORT || 3000
+const adminSecretKey = process.env.ADMIN_SECRET_KEY || "This is secret";
 
 app.use(express.json());
 app.use(cookieParser())
@@ -43,3 +44,5 @@ app.use(errorMiddleware)
 app.listen(3000, () => {
     console.log(`App is listening on ${PORT}`)
 })
+
+export { adminSecretKey }
