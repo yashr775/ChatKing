@@ -27,6 +27,24 @@ const adminLogin = TryCatch(async (req, res, next) => {
         });
 });
 
+const adminLogout = TryCatch(async (req, res, next) => {
+    return res
+        .status(200)
+        .cookie("chatking-admin-token", "", {
+            ...cookieOption,
+            maxAge: 0,
+        })
+        .json({
+            success: true,
+            message: "Logged Out Successfully",
+        });
+});
+
+const getAdminData = TryCatch(async (req, res, next) => {
+    return res.status(200).json({
+        admin: true,
+    });
+});
 
 const allUsers = TryCatch(async (req, res, next) => {
     const users = await User.find({});
@@ -53,10 +71,9 @@ const allUsers = TryCatch(async (req, res, next) => {
         status: "success",
         users: transformedUsers,
     });
-})
+});
 
 const allChats = TryCatch(async (req, res, next) => {
-
     const chats = await Chat.find({})
         .populate("members", "name avatar")
         .populate("creator", "name avatar");
@@ -89,7 +106,7 @@ const allChats = TryCatch(async (req, res, next) => {
         status: "success",
         chats: transformedChats,
     });
-})
+});
 
 const allMessages = TryCatch(async (req, res) => {
     const messages = await Message.find({})
@@ -117,7 +134,6 @@ const allMessages = TryCatch(async (req, res) => {
         messages: transformedMessages,
     });
 });
-
 
 const getDashboardStats = TryCatch(async (req, res) => {
     const [groupsCount, usersCount, messagesCount, totalChatsCount] =
@@ -165,5 +181,12 @@ const getDashboardStats = TryCatch(async (req, res) => {
     });
 });
 
-
-export { allUsers, allChats, allMessages, getDashboardStats, adminLogin }
+export {
+    allUsers,
+    allChats,
+    allMessages,
+    getDashboardStats,
+    adminLogin,
+    adminLogout,
+    getAdminData,
+};
