@@ -6,6 +6,7 @@ import { connectDB } from './utils/features.js';
 import dotenv from 'dotenv'
 import { errorMiddleware } from './middlewares/errors.js';
 import cookieParser from 'cookie-parser';
+import { Server } from 'socket.io';
 
 
 
@@ -15,6 +16,7 @@ dotenv.config({
 
 
 const mongoURI = process.env.MONGO_URI
+const envMode = process.env.NODE_ENV.trim() || "PRODUCTION";
 
 
 const app = express();
@@ -34,15 +36,11 @@ app.use("/user", userRoute)
 app.use("/chat", chatRoute)
 app.use("/admin", adminRoute)
 
-app.get("/", (req, res) => {
-    console.log("Hello world")
-})
-
 
 app.use(errorMiddleware)
 
 app.listen(3000, () => {
-    console.log(`App is listening on ${PORT}`)
+    console.log(`App is listening on ${PORT} in ${envMode}`)
 })
 
-export { adminSecretKey }
+export { envMode, adminSecretKey }
