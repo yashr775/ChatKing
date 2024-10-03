@@ -12,6 +12,7 @@ import { NEW_MESSAGE, NEW_MESSAGE_ALERT, ONLINE_USERS } from "./constants/event.
 import { v4 as uuid } from "uuid"
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
+import cors from "cors";
 
 dotenv.config({
     path: "./.env",
@@ -30,12 +31,17 @@ const userSocketIDs = new Map();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+    origin: ["http://http://localhost:5173", "http://localhost:4173", process.env.CLIENT_URL],
+    credentials: true
+
+}))
 
 connectDB(mongoURI);
 
-app.use("/user", userRoute);
-app.use("/chat", chatRoute);
-app.use("/admin", adminRoute);
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/chat", chatRoute);
+app.use("/api/v1/admin", adminRoute);
 
 io.on("connection", (socket) => {
     console.log("A user connected", socket.id);
