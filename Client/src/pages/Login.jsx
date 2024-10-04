@@ -1,11 +1,27 @@
-import { Container, Paper, TextField, Typography, Button, Stack, Avatar, IconButton } from "@mui/material";
+import {
+    Container,
+    Paper,
+    TextField,
+    Typography,
+    Button,
+    Stack,
+    Avatar,
+    IconButton,
+} from "@mui/material";
 import { useInputValidation, useFileHandler } from "6pp";
-import { CameraAlt as CameraAltIcon, WifiPasswordSharp } from "@mui/icons-material";
+import {
+    CameraAlt as CameraAltIcon,
+    WifiPasswordSharp,
+} from "@mui/icons-material";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponents";
 import { useState } from "react";
 import { usernameValidator } from "../utils/validators";
 import { bgGradient } from "../constants/color";
-
+import { server } from "../constants/config";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { userExists } from "../redux/reducers/auth";
+import toast from "react-hot-toast";
 
 const Login = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -14,20 +30,40 @@ const Login = () => {
     const bio = useInputValidation("");
     const username = useInputValidation("", usernameValidator);
     const password = useInputValidation("");
+    const dispatch = useDispatch();
 
     const avatar = useFileHandler("single");
     const handleSignUp = (e) => {
         e.preventDefault();
-    }
+    };
 
-    const handleLogIn = (e) => {
+    const handleLogIn = async (e) => {
         e.preventDefault();
-    }
 
+
+        const config = {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+
+        try {
+            const { data } = await axios.post(`${server}/api/v1/user/login`, {
+                username: username.value,
+                password: password.value,
+            }, config)
+            dispatch(userExists(true))
+            toast.success(data.message)
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
+
+    };
 
     const toggleLogin = () => {
-        return setIsLogin((prev) => !prev)
-    }
+        return setIsLogin((prev) => !prev);
+    };
 
     return (
         <div
@@ -97,16 +133,10 @@ const Login = () => {
                                 <Typography textAlign={"center"} m={"1rem"}>
                                     OR
                                 </Typography>
-                                <Button
-                                    fullWidth
-                                    variant="text"
-                                    onClick={toggleLogin}
-                                >
+                                <Button fullWidth variant="text" onClick={toggleLogin}>
                                     Sign Up Instead
                                 </Button>
                             </form>
-
-
                         </>
                     ) : (
                         <>
@@ -158,7 +188,8 @@ const Login = () => {
                                                 onChange={avatar.changeHandler}
                                             />
                                         </>
-                                    </IconButton></Stack>
+                                    </IconButton>
+                                </Stack>
                                 <TextField
                                     required
                                     fullWidth
@@ -185,7 +216,8 @@ const Login = () => {
                                     variant="outlined"
                                     value={username.value}
                                     onChange={username.changeHandler}
-                                /> {username.error && (
+                                />{" "}
+                                {username.error && (
                                     <Typography color="error" variant="caption">
                                         {username.error}
                                     </Typography>
@@ -214,17 +246,10 @@ const Login = () => {
                                 <Typography textAlign={"center"} m={"1rem"}>
                                     OR
                                 </Typography>
-                                <Button
-                                    fullWidth
-                                    variant="text"
-                                    onClick={toggleLogin}
-                                >
-
+                                <Button fullWidth variant="text" onClick={toggleLogin}>
                                     Log In Instead
                                 </Button>
                             </form>
-
-
                         </>
                     )}
                 </Paper>
