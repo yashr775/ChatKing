@@ -33,8 +33,29 @@ const Login = () => {
     const dispatch = useDispatch();
 
     const avatar = useFileHandler("single");
-    const handleSignUp = (e) => {
+    const handleSignUp = async (e) => {
         e.preventDefault();
+
+        const formData = new FormData();
+
+        formData.append("avatar", avatar.file);
+        formData.append("name", name.value);
+        formData.append("bio", bio.value);
+        formData.append("username", username.value);
+        formData.append("password", password.value);
+        const config = {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        }
+
+        try {
+            const { data } = await axios.post(`${server}/api/v1/user/new`, formData, config)
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
+
     };
 
     const handleLogIn = async (e) => {

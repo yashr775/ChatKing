@@ -13,6 +13,7 @@ import { v4 as uuid } from "uuid"
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
 import cors from "cors";
+import { v2 as cloudinary } from "cloudinary"
 
 dotenv.config({
     path: "./.env",
@@ -38,6 +39,12 @@ app.use(cors({
 }))
 
 connectDB(mongoURI);
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/chat", chatRoute);
