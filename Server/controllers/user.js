@@ -18,9 +18,10 @@ const newUser = TryCatch(async (req, res) => {
     const result = await uploadFilesToCloudinary([file])
 
     const avatar = {
-        public_id: result.public_id,
+        public_id: result[0].public_id,
         url: result[0].url,
     };
+    console.log(avatar.public_id)
 
     const user = await User.create({
         name,

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     Container,
     Paper,
@@ -10,8 +11,7 @@ import {
 } from "@mui/material";
 import { useInputValidation, useFileHandler } from "6pp";
 import {
-    CameraAlt as CameraAltIcon,
-    WifiPasswordSharp,
+    CameraAlt as CameraAltIcon
 } from "@mui/icons-material";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponents";
 import { useState } from "react";
@@ -25,7 +25,7 @@ import toast from "react-hot-toast";
 
 const Login = () => {
     const [isLogin, setIsLogin] = useState(true);
-
+    const [isLoading, setIsLoading] = useState(false);
     const name = useInputValidation("");
     const bio = useInputValidation("");
     const username = useInputValidation("", usernameValidator);
@@ -33,8 +33,17 @@ const Login = () => {
     const dispatch = useDispatch();
 
     const avatar = useFileHandler("single");
+
+    const toggleLogin = () => {
+        return setIsLogin((prev) => !prev);
+    };
+
     const handleSignUp = async (e) => {
         e.preventDefault();
+
+        const toastId = toast.loading("Signing Up...");
+        setIsLoading(true);
+
 
         const formData = new FormData();
 
@@ -51,16 +60,29 @@ const Login = () => {
         }
 
         try {
-            const { data } = await axios.post(`${server}/api/v1/user/new`, formData, config)
+            const { data } = await axios.post(
+                `${server}/api/v1/user/new`,
+                formData,
+                config
+            );
+
+            dispatch(userExists(data.user));
+            toast.success(data.message, {
+                id: toastId,
+            });
         } catch (error) {
-            toast.error(error.response.data.message)
+            toast.error(error?.response?.data?.message || "Something Went Wrong", {
+                id: toastId,
+            });
+        } finally {
+            setIsLoading(false);
         }
 
     };
 
     const handleLogIn = async (e) => {
         e.preventDefault();
-
+        const toastId = toast.loading("Logging In...");
 
         const config = {
             withCredentials: true,
@@ -74,17 +96,22 @@ const Login = () => {
                 username: username.value,
                 password: password.value,
             }, config)
-            dispatch(userExists(true))
-            toast.success(data.message)
+            dispatch(userExists(data.user))
+            toast.success(data.message, {
+                id: toastId,
+            });
+
         } catch (error) {
-            toast.error(error.response.data.message)
+            toast.error(error?.response?.data?.message || "Something Went Wrong", {
+                id: toastId,
+            });
+        } finally {
+            setIsLoading(false);
         }
 
     };
 
-    const toggleLogin = () => {
-        return setIsLogin((prev) => !prev);
-    };
+
 
     return (
         <div
@@ -251,7 +278,7 @@ const Login = () => {
                                     margin="normal"
                                     variant="outlined"
                                     value={password.value}
-                                    onChange={WifiPasswordSharp.changeHandler}
+                                    onChange={password.changeHandler}
                                 />
                                 <Button
                                     sx={{
