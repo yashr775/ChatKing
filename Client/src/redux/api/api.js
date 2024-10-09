@@ -8,10 +8,10 @@ const api = createApi({
 
     tagTypes: ["Chat"],
 
-    endPoints: (builder) => ({
+    endpoints: (builder) => ({
         myChats: builder.query({
             query: () => ({
-                url: "chats/my",
+                url: "chat/my",
                 credentials: "include",
             }),
             providesTags: ["Chat"],

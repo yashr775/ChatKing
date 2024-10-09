@@ -4,21 +4,28 @@
 
 import Header from "./Header";
 import Title from "../shared/Title";
-import { Grid } from "@mui/material";
+import { Grid, Skeleton } from "@mui/material";
 import ChatList from "../specific/ChatList";
 import { samepleChats } from "../../constants/sampleData";
 import { useParams } from "react-router-dom";
 import Profile from "../specific/Profile";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
+import { useMyChatsQuery } from "../../redux/api/api";
 const AppLayout = (WrappedComponent) => {
+
+
     return (props) => {
         const params = useParams();
         const chatId = params.chatId;
 
-        const handleDeleteChat = (e, _id, groupChat) => {
+        const { isLoading, data, error, isError, refetch } = useMyChatsQuery("");
+        console.log(data);
+
+
+        const handleDeleteChat = useCallback((e, _id, groupChat) => {
             e.preventDefault();
-            console.log(_id + " " + groupChat)
-        }
+            console.log(_id + " " + groupChat);
+        }, []);
         const [onlineUsers, setOnlineUsers] = useState([]);
 
         return (
@@ -36,12 +43,16 @@ const AppLayout = (WrappedComponent) => {
                         }}
                         height={"100%"}
                     >
-                        <ChatList
-                            chats={samepleChats}
-                            chatId={chatId}
-                            handleDeleteChat={handleDeleteChat}
-                            onlineUsers={onlineUsers}
-                        />
+                        {isLoading ? (
+                            <Skeleton />
+                        ) : (
+                            <ChatList
+                                chats={data?.chats}
+                                chatId={chatId}
+                                handleDeleteChat={handleDeleteChat}
+                                onlineUsers={onlineUsers}
+                            />
+                        )}
                     </Grid>
                     <Grid item xs={12} sm={8} md={5} lg={5} height={"100%"}>
                         {" "}
@@ -63,7 +74,7 @@ const AppLayout = (WrappedComponent) => {
                 </Grid>
             </>
         );
-    };
+    }
 };
 
 export default AppLayout;
