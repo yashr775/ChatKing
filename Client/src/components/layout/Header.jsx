@@ -27,6 +27,7 @@ import axios from "axios";
 import { userNotExists } from "../../redux/reducers/auth";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
+import { setIsMobile } from "../../redux/reducers/misc";
 
 const SearchDialog = lazy(() => import("../specific/Search"));
 const NotifcationDialog = lazy(() => import("../specific/Notifications"));
@@ -36,7 +37,6 @@ const Header = () => {
 
     const navigate = useNavigate();
 
-    const [mobile, setMobile] = useState(false);
     const [isSearch, setIsSearch] = useState(false);
     const [isNewGroup, setIsNewGroup] = useState(false);
     const [isNotification, setIsNotification] = useState(false);
@@ -45,7 +45,7 @@ const Header = () => {
 
     const handleMobile = (e) => {
         e.preventDefault()
-        setMobile(prev => !prev)
+        dispatch(setIsMobile(prev => !prev))
     }
 
     const openSearch = (e) => {
