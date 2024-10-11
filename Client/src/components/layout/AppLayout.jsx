@@ -12,6 +12,7 @@ import Profile from "../specific/Profile";
 import { memo, useCallback, useState } from "react";
 import { useMyChatsQuery } from "../../redux/api/api";
 import { useDispatch, useSelector } from "react-redux";
+import { useErrors } from "../../hooks/hooks";
 const AppLayout = (WrappedComponent) => {
 
 
@@ -26,7 +27,7 @@ const AppLayout = (WrappedComponent) => {
 
         const { isLoading, data, error, isError, refetch } = useMyChatsQuery("");
 
-
+        useErrors([{ error, isError }]);
 
         const handleDeleteChat = (e, _id, groupChat) => {
             e.preventDefault();
