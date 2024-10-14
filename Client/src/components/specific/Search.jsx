@@ -3,10 +3,11 @@ import { useInputValidation } from "6pp";
 import { Dialog, Stack, DialogTitle, TextField, InputAdornment, List } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 import UserItem from "../shared/UserItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { sampleUsers } from "../../constants/sampleData";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsSearch } from "../../redux/reducers/misc";
+import { useLazySearchUserQuery } from "../../redux/api/api";
 
 
 
@@ -16,6 +17,7 @@ const Search = () => {
     const dispatch = useDispatch();
 
     const [users, setUsers] = useState(sampleUsers)
+    const [searchUser] = useLazySearchUserQuery()
 
     const search = useInputValidation("")
 
@@ -29,6 +31,10 @@ const Search = () => {
         dispatch(setIsSearch(false));
     }
 
+
+    useEffect(() => {
+
+    }, [search.value])
 
     return (
         <Dialog open={isSearch} onClose={searchCloseHandler}>
