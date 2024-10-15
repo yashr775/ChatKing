@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import moment from "moment";
 const transformImage = (url = "", width = 100) => {
-    console.log(width)
+
     return url;
 };
 

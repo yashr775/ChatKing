@@ -32,7 +32,7 @@ app.get("/search", searchUser);
 app.put(
     "/sendrequest",
     sendRequestValidator(),
-    registerValidator,
+    validateHandler,
     sendFriendRequest
 );
 app.put(

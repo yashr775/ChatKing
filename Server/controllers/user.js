@@ -1,6 +1,6 @@
 import { TryCatch } from "../middlewares/errors.js";
 import { User } from "../models/user.js";
-import { cookieOption, sendToken, uploadFilesToCloudinary } from "../utils/features.js";
+import { cookieOption, emitEvent, sendToken, uploadFilesToCloudinary } from "../utils/features.js";
 import { compare } from "bcrypt";
 import { ErrorHandler } from "../utils/utility.js";
 import { Chat } from "../models/chat.js";
@@ -91,6 +91,7 @@ const searchUser = TryCatch(async (req, res, next) => {
 
 const sendFriendRequest = TryCatch(async (req, res, next) => {
     const { userId } = req.body;
+    console.log("1")
 
     const request = await Request.findOne({
         $or: [
@@ -100,6 +101,7 @@ const sendFriendRequest = TryCatch(async (req, res, next) => {
     });
 
     if (request) return next(new ErrorHandler("Request already sent", 400));
+
 
     await Request.create({
         sender: req.user,
