@@ -15,11 +15,11 @@ const useErrors = (errors = []) => {
     }, [errors]);
 };
 
-const useAsyncMutation = (mutatationHook) => {
+const useAsyncMutation = (mutationHook) => {
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState(null);
 
-    const [mutate] = mutatationHook();
+    const [mutate] = mutationHook();
 
     const executeMutation = async (toastMessage, ...args) => {
         setIsLoading(true);

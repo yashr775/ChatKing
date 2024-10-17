@@ -26,30 +26,14 @@ const Search = () => {
 
     const [users, setUsers] = useState([]);
     const [searchUser] = useLazySearchUserQuery();
-    const [sendFriendRequest] = useAsyncMutation(useSendFriendRequestMutation());
+    const [sendFriendRequest, isLoadingSendFriendRequest,] = useAsyncMutation(useSendFriendRequestMutation);
 
     const search = useInputValidation("");
 
     const addFriendHandler = async (id) => {
-        console.log(id);
-        try {
-
-            const res = await sendFriendRequest({ userId: id });
-
-            if (res.data) {
-                toast.success("Request sent successfully");
-                console.log(res.data);
-            } else {
-                console.log(res.error.data.message);
-            }
-
-        } catch (error) {
-            console.log(error);
-            toast.error("Something went wrong");
-        }
+        await sendFriendRequest("Sending friend request... ", { userId: id })
     };
 
-    let isLoadingSendFriendRequest = false;
 
     const searchCloseHandler = () => {
         dispatch(setIsSearch(false));
