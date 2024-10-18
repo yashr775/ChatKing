@@ -41,6 +41,7 @@ const Login = () => {
     const handleSignUp = async (e) => {
         e.preventDefault();
 
+
         const toastId = toast.loading("Signing Up...");
         setIsLoading(true);
 
@@ -59,7 +60,9 @@ const Login = () => {
             }
         }
 
+
         try {
+
             const { data } = await axios.post(
                 `${server}/api/v1/user/new`,
                 formData,
@@ -70,6 +73,7 @@ const Login = () => {
             toast.success(data.message, {
                 id: toastId,
             });
+
         } catch (error) {
             toast.error(error?.response?.data?.message || "Something Went Wrong", {
                 id: toastId,

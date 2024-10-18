@@ -1,31 +1,50 @@
 /* eslint-disable react/prop-types */
-import { Avatar, Dialog, DialogTitle, Stack, Typography, Button, ListItem } from "@mui/material";
-import { sampleNotifications } from "../../constants/sampleData";
+import { Avatar, Dialog, DialogTitle, Stack, Typography, Button, ListItem, Skeleton } from "@mui/material";
 import { memo } from "react"
+import { useGetNotificationsQuery } from "../../redux/api/api";
+import { useErrors } from "../../hooks/hooks";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsNotification } from "../../redux/reducers/misc";
 
 const Notifications = () => {
 
+    const { isNotification } = useSelector((state) => state.misc)
+
+    const dispatch = useDispatch();
+
+    const { isLoading, data, isError, error } = useGetNotificationsQuery();
+
+    useErrors([{ error, isError }])
+
     const friendRequestHandler = ({ _id, accept }) => { console.log(_id + " " + accept) }
 
+    const closeHandler = () => {
+        dispatch(setIsNotification(false))
+    }
+
     return (
-        <Dialog open>
+        <Dialog open={isNotification} onClose={closeHandler}>
             <Stack p={{ xs: "1rem", sm: "2rem" }} maxWidth={"25rem"}>
                 {" "}
                 <DialogTitle>Notifications</DialogTitle>
-                <>
-                    {sampleNotifications.length > 0 ? (
-                        sampleNotifications.map(({ sender, _id }) => (
-                            <NotificationItem
-                                sender={sender}
-                                _id={_id}
-                                handler={friendRequestHandler}
-                                key={_id}
-                            />
-                        ))
-                    ) : (
-                        <Typography textAlign={"center"}>0 notifications</Typography>
-                    )}
-                </>
+                {isLoading ? (
+                    <Skeleton />
+                ) : (
+                    <>
+                        {data?.allRequests.length > 0 ? (
+                            data?.allRequests?.map(({ sender, _id }) => (
+                                <NotificationItem
+                                    sender={sender}
+                                    _id={_id}
+                                    handler={friendRequestHandler}
+                                    key={_id}
+                                />
+                            ))
+                        ) : (
+                            <Typography textAlign={"center"}>0 notifications</Typography>
+                        )}
+                    </>
+                )}
             </Stack>
         </Dialog>
     );
