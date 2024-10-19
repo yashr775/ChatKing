@@ -1,6 +1,5 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { server } from "../../constants/config"
-
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { server } from "../../constants/config";
 
 
 const api = createApi({
@@ -22,9 +21,8 @@ const api = createApi({
             query: (name) => ({
                 url: `user/search?name=${name}`,
                 credentials: "include",
-
             }),
-            provideTags: ["User"]
+            provideTags: ["User"],
         }),
 
         sendFriendRequest: builder.mutation({
@@ -32,8 +30,7 @@ const api = createApi({
                 url: "user/sendrequest",
                 method: "PUT",
                 credentials: "include",
-                body: data
-
+                body: data,
             }),
             invalidatesTags: ["User"],
         }),
@@ -42,16 +39,27 @@ const api = createApi({
             query: () => ({
                 url: `user/notifications`,
                 credentials: "include",
-
             }),
-            keepUnusedDataFor: 0
+            keepUnusedDataFor: 0,
+        }),
 
-        })
-
-    })
-})
-
-
+        acceptFriendRequest: builder.mutation({
+            query: (data) => ({
+                url: `user/acceptrequest`,
+                method: "PUT",
+                credentials: "include",
+                body: data,
+            }),
+            invalidatesTags: ["Chat"],
+        }),
+    }),
+});
 
 export default api;
-export const { useMyChatsQuery, useLazySearchUserQuery, useSendFriendRequestMutation, useGetNotificationsQuery } = api
+export const {
+    useMyChatsQuery,
+    useLazySearchUserQuery,
+    useSendFriendRequestMutation,
+    useGetNotificationsQuery,
+    useAcceptFriendRequestMutation,
+} = api;

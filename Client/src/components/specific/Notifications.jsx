@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 import { Avatar, Dialog, DialogTitle, Stack, Typography, Button, ListItem, Skeleton } from "@mui/material";
 import { memo } from "react"
-import { useGetNotificationsQuery } from "../../redux/api/api";
+import { useAcceptFriendRequestMutation, useGetNotificationsQuery } from "../../redux/api/api";
 import { useErrors } from "../../hooks/hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsNotification } from "../../redux/reducers/misc";
+import toast from "react-hot-toast";
 
 const Notifications = () => {
 
@@ -14,9 +15,30 @@ const Notifications = () => {
 
     const { isLoading, data, isError, error } = useGetNotificationsQuery();
 
+    const [acceptrequest] = useAcceptFriendRequestMutation()
+
     useErrors([{ error, isError }])
 
-    const friendRequestHandler = ({ _id, accept }) => { console.log(_id + " " + accept) }
+    const friendRequestHandler = async ({ _id, accept }) => {
+
+        dispatch(setIsNotification(false))
+        try {
+            const res = await acceptrequest({ requestId: _id, accept })
+
+            if (res.data?.success) {
+                console.log("MESSAGE")
+                toast.success(res.data.message)
+            } else {
+                toast.error(res.data.message || "Something went wromg")
+
+            }
+
+        } catch (error) {
+            toast.error("Something went wrong")
+            console.log(error)
+
+        }
+    }
 
     const closeHandler = () => {
         dispatch(setIsNotification(false))
