@@ -14,6 +14,8 @@ import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary"
+import { corsOptions } from "./constants/config.js";
+import { socketAuthenticator } from "./middlewares/auth.js";
 
 dotenv.config({
     path: "./.env",
@@ -24,7 +26,7 @@ const envMode = process.env.NODE_ENV.trim() || "PRODUCTION";
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {});
+const io = new Server(server, { cors: corsOptions });
 
 const PORT = process.env.PORT || 3000;
 const adminSecretKey = process.env.ADMIN_SECRET_KEY || "This is secret";
@@ -32,11 +34,7 @@ const userSocketIDs = new Map();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:4173", process.env.CLIENT_URL],
-    credentials: true
-
-}))
+app.use(cors(corsOptions))
 
 connectDB(mongoURI);
 
@@ -49,6 +47,10 @@ cloudinary.config({
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/chat", chatRoute);
 app.use("/api/v1/admin", adminRoute);
+
+io.use((socket, next) => {
+    cookieParser()(socket.request, socket.request.res, async (err) => await socketAuthenticator(err, socket, next))
+})
 
 io.on("connection", (socket) => {
     console.log("A user connected", socket.id);
@@ -72,6 +74,8 @@ io.on("connection", (socket) => {
             chat: chatId,
             createdAt: new Date().toISOString(),
         };
+
+
 
         const messageForDB = {
             content: message,

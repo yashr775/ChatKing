@@ -13,12 +13,16 @@ import { memo, useCallback, useState } from "react";
 import { useMyChatsQuery } from "../../redux/api/api";
 import { useDispatch, useSelector } from "react-redux";
 import { useErrors } from "../../hooks/hooks";
+import { getSocket } from "../../socket";
 const AppLayout = (WrappedComponent) => {
 
 
     return (props) => {
 
         const [onlineUsers, setOnlineUsers] = useState([]);
+
+        const socket = getSocket();
+        console.log(socket.id)
 
         const params = useParams();
         const chatId = params.chatId;
