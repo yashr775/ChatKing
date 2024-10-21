@@ -1,6 +1,8 @@
-import { Fragment } from "react";
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import { Fragment, useState } from "react";
 import AppLayout from "../components/layout/AppLayout";
-import { IconButton, Stack } from "@mui/material";
+import { IconButton, Skeleton, Stack } from "@mui/material";
 import { useRef } from "react";
 import { grayColor } from "../constants/color";
 import { InputBox } from "../components/styles/StyledComponents";
@@ -12,22 +14,35 @@ import { orange } from "../constants/color";
 import FileMenu from "../components/dialogs/FileMenu";
 import { sampleMessage } from "../constants/sampleData";
 import MessageComponent from "../components/shared/MessageComponent";
+import { getSocket } from "../socket";
+import { NEW_MESSAGE } from "../constants/event";
+import { useChatDetailsQuery } from "../redux/api/api";
 
 const user = {
     _id: "1",
     name: "abhi10"
 }
 
-const Chat = () => {
+const Chat = ({ chatId, members, }) => {
     const containerRef = useRef(null);
+    const socket = getSocket();
+
+    const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId })
+
+    const [message, setMessage] = useState("")
 
     const fileMenuRef = useRef(null);
 
     const submitHandler = (e) => {
         e.preventDefault();
+        const members = chatDetails?.data?.chat?.members
+
+        if (!message.trim) return;
+        socket.emit(NEW_MESSAGE, { chatId, members, message })
+        setMessage("")
     };
 
-    return (
+    return (chatDetails.isLoading ? <Skeleton /> :
         <Fragment>
             {" "}
             <Stack
@@ -69,9 +84,9 @@ const Chat = () => {
                     </IconButton>
 
 
-                    <InputBox placeholder="Type Message Here..." />
+                    <InputBox placeholder="Type Message Here..." value={message} onChange={(e) => setMessage(e.target.value)} />
 
-                    <IconButton sx={{
+                    <IconButton type="submit" sx={{
                         rotate: "-30deg",
                         bgcolor: orange,
                         color: "white",
@@ -90,4 +105,4 @@ const Chat = () => {
     );
 };
 
-export default AppLayout()(Chat);
+export default AppLayout(Chat);

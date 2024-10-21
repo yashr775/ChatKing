@@ -86,7 +86,6 @@ io.on("connection", (socket) => {
             sender: user._id,
             chat: chatId,
         };
-
         const membersSocket = getSockets(members, userSocketIDs);
         io.to(membersSocket).emit(NEW_MESSAGE, {
             chatId,
@@ -113,4 +112,4 @@ server.listen(3000, () => {
     console.log(`App is listening on ${PORT} in ${envMode}`);
 });
 
-export { envMode, adminSecretKey };
+export { envMode, adminSecretKey, userSocketIDs };

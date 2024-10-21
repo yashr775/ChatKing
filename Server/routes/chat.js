@@ -39,6 +39,7 @@ app.post("/message", attachmentMulter, sendAttachmentsValidator(), validateHandl
 
 app
     .route("/:id")
+    .get(chatIdValidator(), validateHandler, getChatDetails)
     .put(renameValidator(), validateHandler, renameGroup)
     .delete(chatIdValidator(), validateHandler, deleteChat);
 export default app;
