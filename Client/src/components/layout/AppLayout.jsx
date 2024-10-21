@@ -22,7 +22,6 @@ const AppLayout = (WrappedComponent) => {
         const [onlineUsers, setOnlineUsers] = useState([]);
 
         const socket = getSocket();
-        console.log(socket.id)
 
         const params = useParams();
         const chatId = params.chatId;
