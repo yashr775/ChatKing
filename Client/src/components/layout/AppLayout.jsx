@@ -82,6 +82,7 @@ const AppLayout = (WrappedComponent) => {
                                 chatId={chatId}
                                 handleDeleteChat={handleDeleteChat}
                                 onlineUsers={onlineUsers}
+                                user={user}
                             />
                         )}
                     </Grid>

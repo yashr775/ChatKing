@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { Fragment, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import AppLayout from "../components/layout/AppLayout";
 import { IconButton, Skeleton, Stack } from "@mui/material";
 import { useRef } from "react";
@@ -17,32 +17,48 @@ import MessageComponent from "../components/shared/MessageComponent";
 import { getSocket } from "../socket";
 import { NEW_MESSAGE } from "../constants/event";
 import { useChatDetailsQuery } from "../redux/api/api";
+import { useErrors, useSocketEvents } from "../hooks/hooks";
 
-const user = {
-    _id: "1",
-    name: "abhi10"
-}
 
-const Chat = ({ chatId, members, }) => {
+const Chat = ({ chatId, user }) => {
     const containerRef = useRef(null);
     const socket = getSocket();
 
-    const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId })
+    const errors = [
+        { isError: chatDetails.isError, error: chatDetails.error },
+    ];
 
-    const [message, setMessage] = useState("")
+
+    const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
+
+    const [message, setMessage] = useState("");
+    const [messages, setMessages] = useState([]);
 
     const fileMenuRef = useRef(null);
 
     const submitHandler = (e) => {
         e.preventDefault();
-        const members = chatDetails?.data?.chat?.members
+        const members = chatDetails?.data?.chat?.members;
 
         if (!message.trim) return;
-        socket.emit(NEW_MESSAGE, { chatId, members, message })
-        setMessage("")
+        socket.emit(NEW_MESSAGE, { chatId, members, message });
+        setMessage("");
     };
 
-    return (chatDetails.isLoading ? <Skeleton /> :
+    const newMessagesHandler = useCallback((data) => {
+        console.log(data);
+        setMessages(prev => [...prev, data.message])
+    }, []);
+
+    const eventHandler = { [NEW_MESSAGE]: newMessagesHandler };
+
+    useSocketEvents(socket, eventHandler);
+
+    useErrors(errors)
+
+    return chatDetails.isLoading ? (
+        <Skeleton />
+    ) : (
         <Fragment>
             {" "}
             <Stack
@@ -57,7 +73,9 @@ const Chat = ({ chatId, members, }) => {
                     overflowY: "auto",
                 }}
             >
-                {sampleMessage.map((message) => (<MessageComponent key={user.id} user={user} message={message} />))}
+                {messages.map((i) => (
+                    <MessageComponent key={i._id} user={user} message={i} />
+                ))}
             </Stack>{" "}
             <form
                 style={{
@@ -72,30 +90,36 @@ const Chat = ({ chatId, members, }) => {
                     alignItems={"center"}
                     position={"relative"}
                 >
-                    <IconButton sx={{
-                        position: "absolute",
-                        left: "1.5rem",
-                        rotate: "30deg",
-                    }}
-
+                    <IconButton
+                        sx={{
+                            position: "absolute",
+                            left: "1.5rem",
+                            rotate: "30deg",
+                        }}
                         ref={fileMenuRef}
                     >
                         <AttachFileIcon />{" "}
                     </IconButton>
 
+                    <InputBox
+                        placeholder="Type Message Here..."
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                    />
 
-                    <InputBox placeholder="Type Message Here..." value={message} onChange={(e) => setMessage(e.target.value)} />
-
-                    <IconButton type="submit" sx={{
-                        rotate: "-30deg",
-                        bgcolor: orange,
-                        color: "white",
-                        marginLeft: "1rem",
-                        padding: "0.5rem",
-                        "&:hover": {
-                            bgcolor: "error.dark",
-                        },
-                    }}>
+                    <IconButton
+                        type="submit"
+                        sx={{
+                            rotate: "-30deg",
+                            bgcolor: orange,
+                            color: "white",
+                            marginLeft: "1rem",
+                            padding: "0.5rem",
+                            "&:hover": {
+                                bgcolor: "error.dark",
+                            },
+                        }}
+                    >
                         <SendIcon />{" "}
                     </IconButton>
                 </Stack>
