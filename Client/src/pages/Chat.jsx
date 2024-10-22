@@ -20,7 +20,6 @@ import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
 import { useErrors, useSocketEvents } from "../hooks/hooks";
 import { useInfiniteScrollTop } from "6pp";
 
-
 const Chat = ({ chatId, user }) => {
     const containerRef = useRef(null);
     const socket = getSocket();
@@ -30,7 +29,9 @@ const Chat = ({ chatId, user }) => {
     const [page, setPage] = useState(1);
 
     const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
-    const oldMessagesChunk = useGetMessagesQuery({ chatId, page })
+    const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
+    console.log(message);
+    console.log(oldMessagesChunk)
 
     const errors = [
         { isError: chatDetails.isError, error: chatDetails.error },
@@ -38,10 +39,14 @@ const Chat = ({ chatId, user }) => {
     ];
 
 
-    const allMessages = [...oldMessagesChunk.data.messages, ...messages]
 
-
-    const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(containerRef, oldMessagesChunk.data?.totalPages, page, setPage, oldMessagesChunk.data?.messages)
+    const { data: oldMessages, setData: setOldMessages } = useInfiniteScrollTop(
+        containerRef,
+        oldMessagesChunk.data?.totalPages,
+        page,
+        setPage,
+        oldMessagesChunk.data?.messages
+    );
 
     const fileMenuRef = useRef(null);
 
@@ -56,14 +61,19 @@ const Chat = ({ chatId, user }) => {
 
     const newMessagesHandler = useCallback((data) => {
         console.log(data);
-        setMessages(prev => [...prev, data.message])
+        setMessages((prev) => [...prev, data.message]);
     }, []);
 
     const eventHandler = { [NEW_MESSAGE]: newMessagesHandler };
 
     useSocketEvents(socket, eventHandler);
 
-    useErrors(errors)
+    useErrors(errors);
+
+    const allMessages = [
+        ...oldMessages,
+        ...messages
+    ];
 
     return chatDetails.isLoading ? (
         <Skeleton />

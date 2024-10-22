@@ -376,6 +376,7 @@ const deleteChat = TryCatch(async (req, res, next) => {
 })
 
 const getMessages = TryCatch(async (req, res, next) => {
+
     const chatId = req.params.id;
     const { page = 1 } = req.query;
 
@@ -390,7 +391,6 @@ const getMessages = TryCatch(async (req, res, next) => {
         return next(
             new ErrorHandler("You are not allowed to access this chat", 403)
         );
-
     const [messages, totalMessagesCount] = await Promise.all([
         Message.find({ chat: chatId })
             .sort({ createdAt: -1 })

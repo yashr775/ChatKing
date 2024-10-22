@@ -61,13 +61,13 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-    console.log("A user connected", socket.id);
+    // console.log("A user connected", socket.id);
 
     const user = socket.user;
-    console.log(user)
+    // console.log(user)
 
     userSocketIDs.set(user._id.toString(), socket.id);
-    console.log(userSocketIDs);
+    // console.log(userSocketIDs);
 
     socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
         const messageForRealTime = {
@@ -102,7 +102,7 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         userSocketIDs.delete(user._id.toString());
-        console.log("User disconnected");
+        // console.log("User disconnected");
     });
 });
 
