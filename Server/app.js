@@ -32,6 +32,8 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, { cors: corsOptions });
 
+app.set("io", io)
+
 const PORT = process.env.PORT || 3000;
 const adminSecretKey = process.env.ADMIN_SECRET_KEY || "This is secret";
 const userSocketIDs = new Map();

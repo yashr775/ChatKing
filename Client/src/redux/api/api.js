@@ -4,7 +4,7 @@ import { server } from "../../constants/config";
 
 const api = createApi({
     reducerPath: "api",
-    baseQuery: fetchBaseQuery({ baseUrl: `${server}/api/v1` }),
+    baseQuery: fetchBaseQuery({ baseUrl: `${server}/api/v1/` }),
 
     tagTypes: ["Chat", "User", "Message"],
 
@@ -74,6 +74,15 @@ const api = createApi({
             providesTags: ["Message"]
         }),
 
+        sendAttachments: builder.mutation({
+            query: (data) => ({
+                url: "chat/message",
+                method: "POST",
+                credentials: "include",
+                body: data
+            })
+        })
+
     }),
 });
 
@@ -85,5 +94,6 @@ export const {
     useGetNotificationsQuery,
     useAcceptFriendRequestMutation,
     useChatDetailsQuery,
-    useGetMessagesQuery
+    useGetMessagesQuery,
+    useSendAttachmentsMutation
 } = api;

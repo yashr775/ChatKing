@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 import moment from "moment";
 const transformImage = (url = "", width = 100) => {
+    const newUrl = url.replace("upload", `upload/dpr_auto/w_${width}/`);
 
-    return url;
+    return newUrl;
 };
 
 const fileFormat = (url = "") => {
@@ -38,7 +39,4 @@ const getLast7Days = () => {
     return last7Days;
 };
 
-
-
-
-export { transformImage, fileFormat, getLast7Days }
+export { transformImage, fileFormat, getLast7Days };
