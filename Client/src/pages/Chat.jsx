@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import AppLayout from "../components/layout/AppLayout";
 import { IconButton, Skeleton, Stack } from "@mui/material";
 import { useRef } from "react";
@@ -80,6 +80,17 @@ const Chat = ({ chatId, user }) => {
         ...oldMessages,
         ...messages
     ];
+
+    useEffect(() => {
+
+        return () => {
+            setMessages([]);
+            setMessage("");
+            setOldMessages([]);
+            setPage(1);
+
+        };
+    }, [chatId])
 
     return chatDetails.isLoading ? (
         <Skeleton />
