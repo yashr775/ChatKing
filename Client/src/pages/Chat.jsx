@@ -66,7 +66,7 @@ const Chat = ({ chatId, user }) => {
     }
 
     const newMessagesHandler = useCallback((data) => {
-        console.log(data);
+        if (data.chatId !== chatId) return;
         setMessages((prev) => [...prev, data.message]);
     }, []);
 

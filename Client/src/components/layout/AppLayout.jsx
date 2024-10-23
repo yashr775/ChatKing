@@ -12,21 +12,20 @@ import Profile from "../specific/Profile";
 import { memo, useCallback, useState } from "react";
 import { useMyChatsQuery } from "../../redux/api/api";
 import { useDispatch, useSelector } from "react-redux";
-import { useErrors } from "../../hooks/hooks";
+import { useErrors, useSocketEvents } from "../../hooks/hooks";
 import { getSocket } from "../../socket";
+import { NEW_MESSAGE, NEW_REQUEST } from "../../constants/event";
+import { incrementNotification } from "../../redux/reducers/chat";
 const AppLayout = (WrappedComponent) => {
-
-
     return (props) => {
-
         const [onlineUsers, setOnlineUsers] = useState([]);
 
         const socket = getSocket();
 
         const params = useParams();
         const chatId = params.chatId;
-        const { isMobile } = useSelector((state) => state.misc)
-        const { user } = useSelector((state) => state.auth)
+        const { isMobile } = useSelector((state) => state.misc);
+        const { user } = useSelector((state) => state.auth);
         const dispatch = useDispatch();
 
         const { isLoading, data, error, isError, refetch } = useMyChatsQuery("");
@@ -36,13 +35,24 @@ const AppLayout = (WrappedComponent) => {
         const handleDeleteChat = (e, _id, groupChat) => {
             e.preventDefault();
             console.log(_id + " " + groupChat);
-        }
+        };
 
         const handleMobileClose = () => {
-            dispatch(isMobile(false))
-        }
+            dispatch(isMobile(false));
+        };
 
+        const newMessageAlertHandler = useCallback(() => { }, []);
 
+        const newRequestHandler = useCallback(() => {
+            dispatch(incrementNotification());
+        }, [dispatch]);
+
+        const eventHandler = {
+            [NEW_MESSAGE]: newMessageAlertHandler,
+            [NEW_REQUEST]: newRequestHandler,
+        };
+
+        useSocketEvents(socket, eventHandler);
 
         return (
             <>
@@ -106,7 +116,7 @@ const AppLayout = (WrappedComponent) => {
                 </Grid>
             </>
         );
-    }
+    };
 };
 
 export default AppLayout;

@@ -19,8 +19,7 @@ const miscSlice = createSlice({
     initialState,
     reducers: {
         setIsNewGroup: (state, action) => {
-            state.isNewGroup = action.payload
-
+            state.isNewGroup = action.payload;
         },
         setIsAddMember: (state, action) => {
             state.isAddMember = action.payload;
@@ -47,9 +46,7 @@ const miscSlice = createSlice({
             state.selectedDeleteChat = action.payload;
         },
     },
-}
-
-)
+});
 
 export default miscSlice;
 export const {
