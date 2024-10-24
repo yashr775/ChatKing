@@ -12,6 +12,8 @@ import {
     NEW_MESSAGE,
     NEW_MESSAGE_ALERT,
     ONLINE_USERS,
+    START_TYPING,
+    STOP_TYPING,
 } from "./constants/event.js";
 import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
@@ -32,7 +34,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, { cors: corsOptions });
 
-app.set("io", io)
+app.set("io", io);
 
 const PORT = process.env.PORT || 3000;
 const adminSecretKey = process.env.ADMIN_SECRET_KEY || "This is secret";
@@ -63,13 +65,9 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-    // console.log("A user connected", socket.id);
-
     const user = socket.user;
-    // console.log(user)
 
     userSocketIDs.set(user._id.toString(), socket.id);
-    // console.log(userSocketIDs);
 
     socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
         const messageForRealTime = {
@@ -101,10 +99,17 @@ io.on("connection", (socket) => {
             console.log(error);
         }
     });
+    socket.on(START_TYPING, ({ members, chatId }) => {
+        const membersSocket = getSockets(members);
+        socket.to(membersSocket).emit(START_TYPING, { chatId });
+    });
 
+    socket.on(STOP_TYPING, ({ members, chatId }) => {
+        const membersSocket = getSockets(members);
+        socket.to(membersSocket).emit(STOP_TYPING, { chatId });
+    });
     socket.on("disconnect", () => {
         userSocketIDs.delete(user._id.toString());
-        // console.log("User disconnected");
     });
 });
 
