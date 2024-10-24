@@ -1,11 +1,38 @@
 /* eslint-disable no-unused-vars */
-import { Dialog, DialogTitle, Stack, Typography, TextField, Skeleton, Button } from "@mui/material";
+import {
+    Dialog,
+    DialogTitle,
+    Stack,
+    Typography,
+    TextField,
+    Skeleton,
+    Button,
+} from "@mui/material";
 import UserItem from "../shared/UserItem";
 import { sampleUsers } from "../../constants/sampleData";
 import { useInputValidation } from "6pp";
-import { useState } from "react"
+import { useState } from "react";
+import { useAvailableFriendsQuery } from "../../redux/api/api";
+import { useErrors } from "../../hooks/hooks";
+import { setIsNewGroup } from "../../redux/reducers/misc";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const NewGroup = () => {
+    const { isLoading, isError, data, error } = useAvailableFriendsQuery();
+    const { isNewGroup } = useSelector((state) => state.misc);
+    const dispatch = useDispatch();
+
+    const errors = [
+        {
+            isError,
+            error,
+        },
+    ];
+
+    useErrors(errors);
+
+    console.log(data);
 
     const selectMemberHandler = (id) => {
         setSelectedMembers((prev) =>
@@ -13,21 +40,25 @@ const NewGroup = () => {
                 ? prev.filter((currElement) => currElement !== id)
                 : [...prev, id]
         );
-    }
+    };
     const [selectedMembers, setSelectedMembers] = useState([]);
     const groupName = useInputValidation("");
     const submitHandler = () => {
+        if (!groupName.value) toast.error("Please enter group name");
 
-    }
+        if (selectedMembers.length < 2)
+            toast.error("Please select atleast 3 members");
+
+        closeHandler();
+    };
 
     const closeHandler = () => {
+        dispatch(setIsNewGroup(false));
+    };
 
-    }
-
-    const isLoadingNewGroup = false
-    const isLoading = false
+    const isLoadingNewGroup = false;
     return (
-        <Dialog open onClose={closeHandler}>
+        <Dialog onClose={closeHandler} open={isNewGroup}>
             <Stack p={{ xs: "1rem", sm: "3rem" }} width={"25rem"} spacing={"2rem"}>
                 <DialogTitle textAlign={"center"} variant="h4">
                     New Group
@@ -45,7 +76,7 @@ const NewGroup = () => {
                     {isLoading ? (
                         <Skeleton />
                     ) : (
-                        sampleUsers.map((i) => (
+                        data?.friends?.map((i) => (
                             <UserItem
                                 user={i}
                                 key={i._id}
@@ -79,5 +110,4 @@ const NewGroup = () => {
     );
 };
 
-
-export default NewGroup
+export default NewGroup;

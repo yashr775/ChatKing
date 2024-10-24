@@ -14,7 +14,7 @@ import { orange } from "../constants/color";
 import FileMenu from "../components/dialogs/FileMenu";
 import MessageComponent from "../components/shared/MessageComponent";
 import { getSocket } from "../socket";
-import { NEW_MESSAGE, START_TYPING, STOP_TYPING } from "../constants/event";
+import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from "../constants/event";
 import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
 import { useErrors, useSocketEvents } from "../hooks/hooks";
 import { useInfiniteScrollTop } from "6pp";
@@ -34,6 +34,7 @@ const Chat = ({ chatId, user }) => {
     const [IamTyping, setIamTyping] = useState(false);
     const [userTyping, setUserTyping] = useState(false);
     const typingTimeout = useRef(null);
+    const bottomRef = useRef(null);
     const [fileMenuAnchor, setFileMenuAnchor] = useState(null);
 
     const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
@@ -93,7 +94,7 @@ const Chat = ({ chatId, user }) => {
     const startTypingListener = useCallback(
         (data) => {
             if (data.chatId !== chatId) return;
-            setUserTyping(true)
+            setUserTyping(true);
         },
         [chatId]
     );
@@ -106,7 +107,23 @@ const Chat = ({ chatId, user }) => {
         [chatId]
     );
 
+    const alertListener = useCallback((content) => {
+        const messageForAlert = {
+            content,
+            sender: {
+                _id: Math.floor(Math.random() * 10 + 1).toString,
+                name: user.name,
+            },
+            chat: chatId,
+            createdAt: new Date().toISOString(),
+        };
+
+        setMessages((prev) => [...prev, messageForAlert])
+
+    }, [chatId])
+
     const eventHandler = {
+        [ALERT]: alertListener,
         [NEW_MESSAGE]: newMessagesListener,
         [START_TYPING]: startTypingListener,
         [STOP_TYPING]: stopTypingListener,
@@ -127,6 +144,11 @@ const Chat = ({ chatId, user }) => {
             setPage(1);
         };
     }, [chatId]);
+
+    useEffect(() => {
+        if (bottomRef.current)
+            bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
 
     return chatDetails.isLoading ? (
         <Skeleton />
@@ -150,8 +172,7 @@ const Chat = ({ chatId, user }) => {
                 ))}
 
                 {userTyping && <TypingLoader />}
-                <div />
-
+                <div ref={bottomRef} />
             </Stack>
             <form
                 style={{
