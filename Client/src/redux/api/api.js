@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { server } from "../../constants/config";
 
-
 const api = createApi({
     reducerPath: "api",
     baseQuery: fetchBaseQuery({ baseUrl: `${server}/api/v1/` }),
@@ -71,7 +70,7 @@ const api = createApi({
                 url: `chat/message/${chatId}?page=${page}`,
                 credentials: "include",
             }),
-            keepUnusedDataFor: 0
+            keepUnusedDataFor: 0,
         }),
 
         sendAttachments: builder.mutation({
@@ -79,8 +78,8 @@ const api = createApi({
                 url: "chat/message",
                 method: "POST",
                 credentials: "include",
-                body: data
-            })
+                body: data,
+            }),
         }),
 
         myGroups: builder.query({
@@ -88,21 +87,39 @@ const api = createApi({
                 url: "/chat/my/groups",
                 credentials: "include",
             }),
-            providesTags: ["Chat"]
+            providesTags: ["Chat"],
         }),
         availableFriends: builder.query({
             query: (chatId) => {
                 let url = "user/friends";
-                if (chatId) url += `?chatId=${chatId}`
+                if (chatId) url += `?chatId=${chatId}`;
 
                 return {
                     url,
-                    credentials: "include"
-                }
+                    credentials: "include",
+                };
             },
-            providesTags: ["Chat"]
-        })
+            providesTags: ["Chat"],
+        }),
+        newGroup: builder.mutation({
+            query: ({ name, members }) => ({
+                url: "chat/new",
+                method: "POST",
+                credentials: "include",
+                body: { name, members },
+            }),
+            invalidatesTags: ["Chat"],
+        }),
 
+        renameGroup: builder.mutation({
+            query: ({ chatId, name }) => ({
+                url: `chat/${chatId}`,
+                method: "PUT",
+                credentials: "include",
+                body: { name },
+            }),
+            invalidatesTags: ["Chat"],
+        }),
     }),
 });
 
@@ -117,5 +134,7 @@ export const {
     useGetMessagesQuery,
     useSendAttachmentsMutation,
     useMyGroupsQuery,
-    useAvailableFriendsQuery
+    useAvailableFriendsQuery,
+    useNewGroupMutation,
+    useRenameGroupMutation,
 } = api;

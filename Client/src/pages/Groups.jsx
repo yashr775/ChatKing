@@ -28,8 +28,12 @@ import AvatarCard from "../components/shared/AvatarCard";
 import { Link } from "../components/styles/StyledComponents";
 import { myGroups, sampleUsers } from "../constants/sampleData";
 import UserItem from "../components/shared/UserItem";
-import { useMyGroupsQuery } from "../redux/api/api";
-import { useErrors } from "../hooks/hooks";
+import {
+    useChatDetailsQuery,
+    useMyGroupsQuery,
+    useRenameGroupMutation,
+} from "../redux/api/api";
+import { useAsyncMutation, useErrors } from "../hooks/hooks";
 import { LayoutLoader } from "../components/layout/Loader";
 
 const ConfirmDeleteDialog = lazy(() =>
@@ -48,15 +52,43 @@ const Groups = () => {
     const [groupName, setGroupName] = useState("");
     const [groupNameUpdatedValue, setGroupNameUpdatedValue] = useState("");
     const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
-    const myGroups = useMyGroupsQuery();
-    console.log(myGroups.data)
+    const [members, setMembers] = useState([]);
+    const myGroups = useMyGroupsQuery("");
+    const groupDetails = useChatDetailsQuery(
+        { chatId, populate: true },
+        { skip: !chatId }
+    );
     const isAddMember = false;
 
-    const errors = [{ isError: myGroups.isError, error: myGroups.error }];
+    const [updateGroup, isLoadingGroupName] = useAsyncMutation(
+        useRenameGroupMutation
+    );
+
+    const errors = [
+        { isError: myGroups.isError, error: myGroups.error },
+        {
+            isError: groupDetails.isError,
+            error: groupDetails.error,
+        },
+    ];
 
     useErrors(errors);
 
+    useEffect(() => {
+        const groupData = groupDetails.data;
+        if (groupData) {
+            setGroupName(groupData.chat.name);
+            setGroupNameUpdatedValue(groupData.chat.name);
+            setMembers(groupData.chat.members);
+        }
 
+        return () => {
+            setGroupName("");
+            setGroupNameUpdatedValue("");
+            setMembers([]);
+            setIsEdit(false);
+        };
+    }, [groupDetails.data]);
 
     const navigate = useNavigate();
 
@@ -89,21 +121,13 @@ const Groups = () => {
 
     const updateGroupNameHandler = () => {
         setIsEdit(false);
+        updateGroup("Updating group name ...", {
+            chatId,
+            name: groupNameUpdatedValue,
+        });
     };
 
     const openAddMemberHandler = () => { };
-
-    useEffect(() => {
-        if (chatId) {
-            setGroupName(`Group Name ${chatId}`);
-            setGroupNameUpdatedValue(`Group Name ${chatId}`);
-        }
-
-        return () => {
-            setGroupName("");
-            setGroupNameUpdatedValue("");
-        };
-    }, [chatId]);
 
     const IconBtns = (
         <>
@@ -157,14 +181,20 @@ const Groups = () => {
                         value={groupNameUpdatedValue}
                         onChange={(e) => setGroupNameUpdatedValue(e.target.value)}
                     />
-                    <IconButton onClick={updateGroupNameHandler}>
+                    <IconButton
+                        onClick={updateGroupNameHandler}
+                        disabled={isLoadingGroupName}
+                    >
                         <DoneIcon />
                     </IconButton>
                 </>
             ) : (
                 <>
                     <Typography variant="h4">{groupName}</Typography>
-                    <IconButton onClick={() => setIsEdit(true)}>
+                    <IconButton
+                        disabled={isLoadingGroupName}
+                        onClick={() => setIsEdit(true)}
+                    >
                         <EditIcon />{" "}
                     </IconButton>
                 </>
@@ -204,7 +234,9 @@ const Groups = () => {
         </Stack>
     );
 
-    return myGroups.isLoading ? <LayoutLoader /> : (
+    return myGroups.isLoading ? (
+        <LayoutLoader />
+    ) : (
         <Grid container height={"100vh"}>
             <Grid
                 item
@@ -234,7 +266,7 @@ const Groups = () => {
                 {IconBtns}
                 {groupName && (
                     <>
-                        GroupName
+                        {GroupName}
                         <Typography
                             margin={"2rem"}
                             alignSelf={"flex-start"}
@@ -257,7 +289,7 @@ const Groups = () => {
                         >
                             {/* Members */}
 
-                            {sampleUsers.map((i) => (
+                            {members.map((i) => (
                                 <UserItem
                                     key={i._id}
                                     user={i}
@@ -334,7 +366,7 @@ const GroupsList = ({ w = "100%", myGroups = [], chatId }) => {
 
 const GroupListItem = memo(({ group, chatId }) => {
     const { name, avatar, _id } = group;
-    const avatarArray = Array.isArray(avatar) ? avatar : [avatar];
+    // const avatarArray = Array.isArray(avatar) ? avatar : [avatar];
 
     return (
         <Link
@@ -344,7 +376,7 @@ const GroupListItem = memo(({ group, chatId }) => {
             }}
         >
             <Stack direction={"row"} spacing={"1rem"} alignItems={"center"}>
-                <AvatarCard avatar={avatarArray} />
+                <AvatarCard avatar={avatar} />
                 <Typography>{name}</Typography>
             </Stack>
         </Link>

@@ -1,11 +1,13 @@
 /* eslint-disable no-unused-vars */
+
 import moment from "moment";
 const transformImage = (url = "", width = 100) => {
-    const newUrl = url.replace("upload", `upload/dpr_auto/w_${width}/`);
+    const urlString = String(url);
+
+    const newUrl = urlString.replace("upload/", `upload/dpr_auto/w_${width}/`);
 
     return newUrl;
 };
-
 const fileFormat = (url = "") => {
     const fileExt = url.split(".").pop();
 

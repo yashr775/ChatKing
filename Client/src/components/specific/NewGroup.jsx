@@ -12,8 +12,8 @@ import UserItem from "../shared/UserItem";
 import { sampleUsers } from "../../constants/sampleData";
 import { useInputValidation } from "6pp";
 import { useState } from "react";
-import { useAvailableFriendsQuery } from "../../redux/api/api";
-import { useErrors } from "../../hooks/hooks";
+import { useAvailableFriendsQuery, useNewGroupMutation } from "../../redux/api/api";
+import { useAsyncMutation, useErrors } from "../../hooks/hooks";
 import { setIsNewGroup } from "../../redux/reducers/misc";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -23,6 +23,8 @@ const NewGroup = () => {
     const { isNewGroup } = useSelector((state) => state.misc);
     const dispatch = useDispatch();
 
+    const [newGroup, isLoadingNewGroup] = useAsyncMutation(useNewGroupMutation);
+
     const errors = [
         {
             isError,
@@ -31,8 +33,6 @@ const NewGroup = () => {
     ];
 
     useErrors(errors);
-
-    console.log(data);
 
     const selectMemberHandler = (id) => {
         setSelectedMembers((prev) =>
@@ -49,6 +49,8 @@ const NewGroup = () => {
         if (selectedMembers.length < 2)
             toast.error("Please select atleast 3 members");
 
+        newGroup("Creating new group ...", { name: groupName.value, members: selectedMembers })
+
         closeHandler();
     };
 
@@ -56,7 +58,6 @@ const NewGroup = () => {
         dispatch(setIsNewGroup(false));
     };
 
-    const isLoadingNewGroup = false;
     return (
         <Dialog onClose={closeHandler} open={isNewGroup}>
             <Stack p={{ xs: "1rem", sm: "3rem" }} width={"25rem"} spacing={"2rem"}>

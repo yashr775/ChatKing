@@ -37,7 +37,7 @@ const AppLayout = (WrappedComponent) => {
         const dispatch = useDispatch();
 
         const { isLoading, data, error, isError, refetch } = useMyChatsQuery("");
-
+        console.log(data)
         useErrors([{ error, isError }]);
 
         const handleDeleteChat = (e, _id, groupChat) => {
