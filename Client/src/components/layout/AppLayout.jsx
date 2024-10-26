@@ -8,7 +8,7 @@ import { Drawer, Grid, Skeleton } from "@mui/material";
 import ChatList from "../specific/ChatList";
 import { useNavigate, useParams } from "react-router-dom";
 import Profile from "../specific/Profile";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useMyChatsQuery } from "../../redux/api/api";
 import { useDispatch, useSelector } from "react-redux";
 import { useErrors, useSocketEvents } from "../../hooks/hooks";
@@ -24,7 +24,8 @@ import {
     setNewMessagesAlert,
 } from "../../redux/reducers/chat";
 import { getOrSaveFromStorage } from "../../lib/features";
-import { setIsDeleteMenu } from "../../redux/reducers/misc";
+import { setIsDeleteMenu, setSelectedDeleteChat } from "../../redux/reducers/misc";
+import DeleteChatMenu from "../dialogs/DeleteChatMenu";
 const AppLayout = (WrappedComponent) => {
     return (props) => {
         const [onlineUsers, setOnlineUsers] = useState([]);
@@ -34,6 +35,7 @@ const AppLayout = (WrappedComponent) => {
         const socket = getSocket();
 
         const params = useParams();
+        const deleteMenuAnchor = useRef(null);
         const chatId = params.chatId;
         const { isMobile } = useSelector((state) => state.misc);
         const { user } = useSelector((state) => state.auth);
@@ -43,10 +45,11 @@ const AppLayout = (WrappedComponent) => {
         const { isLoading, data, error, isError, refetch } = useMyChatsQuery("");
         useErrors([{ error, isError }]);
 
-        const handleDeleteChat = (e, _id, groupChat) => {
-            // e.preventDefault();
-            dispatch(setIsDeleteMenu(true))
-            console.log(_id + " " + groupChat);
+        const handleDeleteChat = (e, chatId, groupChat) => {
+            e.preventDefault();
+            dispatch(setIsDeleteMenu(true));
+            dispatch(setSelectedDeleteChat({ chatId, groupChat }));
+            deleteMenuAnchor.current = e.currentTarget;
         };
 
         const handleMobileClose = () => {
@@ -67,7 +70,7 @@ const AppLayout = (WrappedComponent) => {
 
         const refetchListener = useCallback(() => {
             refetch();
-            navigate("/")
+            navigate("/");
         }, [refetch, navigate]);
 
         const eventHandler = {
@@ -86,7 +89,10 @@ const AppLayout = (WrappedComponent) => {
             <>
                 <Title title={"Chat App"} description="jklffd" />
                 <Header />
-
+                <DeleteChatMenu
+                    dispatch={dispatch}
+                    deleteMenuAnchor={deleteMenuAnchor}
+                />
                 {isLoading ? (
                     <Skeleton />
                 ) : (
