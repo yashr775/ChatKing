@@ -12,6 +12,7 @@ import {
     TextField,
     Button,
     Backdrop,
+    CircularProgress,
 } from "@mui/material";
 import {
     Menu as MenuIcon,
@@ -29,8 +30,8 @@ import { Link } from "../components/styles/StyledComponents";
 import UserItem from "../components/shared/UserItem";
 import {
     useAddGroupMembersMutation,
-
     useChatDetailsQuery,
+    useDeleteChatMutation,
     useMyGroupsQuery,
     useRemoveGroupMemberMutation,
     useRenameGroupMutation,
@@ -65,9 +66,7 @@ const Groups = () => {
 
     const myGroups = useMyGroupsQuery("");
 
-    const { isAddMember } = useSelector((state) => state.misc)
-
-
+    const { isAddMember } = useSelector((state) => state.misc);
 
     const dispatch = useDispatch();
     const groupDetails = useChatDetailsQuery(
@@ -83,6 +82,10 @@ const Groups = () => {
         useRemoveGroupMemberMutation
     );
 
+    const [deleteGroup, isLoadingDeleteGroup] = useAsyncMutation(
+        useDeleteChatMutation
+    );
+
     const [addMembers, isLoadingAddMember] = useAsyncMutation(
         useAddGroupMembersMutation
     );
@@ -94,8 +97,6 @@ const Groups = () => {
             error: groupDetails.error,
         },
     ];
-
-
 
     useEffect(() => {
         const groupData = groupDetails.data;
@@ -124,8 +125,9 @@ const Groups = () => {
     };
 
     const deleteHandler = () => {
-        console.log("Delete handle");
+        deleteGroup("Deleting Group ... ", { chatId })
         closeConfirmDeleteHandler();
+        navigate("/groups")
     };
 
     const openConfirmDeleteHandler = () => {
@@ -316,7 +318,7 @@ const Groups = () => {
                         >
                             {/* Members */}
 
-                            {members.map((i) => (
+                            {isLoadingRemoveMember ? <CircularProgress /> : members.map((i) => (
                                 <UserItem
                                     key={i._id}
                                     user={i}

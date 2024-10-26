@@ -6,7 +6,7 @@ import Header from "./Header";
 import Title from "../shared/Title";
 import { Drawer, Grid, Skeleton } from "@mui/material";
 import ChatList from "../specific/ChatList";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Profile from "../specific/Profile";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useMyChatsQuery } from "../../redux/api/api";
@@ -24,9 +24,12 @@ import {
     setNewMessagesAlert,
 } from "../../redux/reducers/chat";
 import { getOrSaveFromStorage } from "../../lib/features";
+import { setIsDeleteMenu } from "../../redux/reducers/misc";
 const AppLayout = (WrappedComponent) => {
     return (props) => {
         const [onlineUsers, setOnlineUsers] = useState([]);
+
+        const navigate = useNavigate();
 
         const socket = getSocket();
 
@@ -41,7 +44,8 @@ const AppLayout = (WrappedComponent) => {
         useErrors([{ error, isError }]);
 
         const handleDeleteChat = (e, _id, groupChat) => {
-            e.preventDefault();
+            // e.preventDefault();
+            dispatch(setIsDeleteMenu(true))
             console.log(_id + " " + groupChat);
         };
 
@@ -54,14 +58,17 @@ const AppLayout = (WrappedComponent) => {
                 if (data.chatId === chatId) return;
                 dispatch(setNewMessagesAlert(data));
             },
-            [chatId]
+            [chatId, dispatch]
         );
 
         const newRequestListener = useCallback(() => {
             dispatch(incrementNotification());
         }, [dispatch]);
 
-        const refetchListener = useCallback(() => { refetch() }, []);
+        const refetchListener = useCallback(() => {
+            refetch();
+            navigate("/")
+        }, [refetch, navigate]);
 
         const eventHandler = {
             [NEW_MESSAGE]: newMessageAlertListener,

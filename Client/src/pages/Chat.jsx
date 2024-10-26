@@ -14,7 +14,12 @@ import { orange } from "../constants/color";
 import FileMenu from "../components/dialogs/FileMenu";
 import MessageComponent from "../components/shared/MessageComponent";
 import { getSocket } from "../socket";
-import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from "../constants/event";
+import {
+    ALERT,
+    NEW_MESSAGE,
+    START_TYPING,
+    STOP_TYPING,
+} from "../constants/event";
 import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
 import { useErrors, useSocketEvents } from "../hooks/hooks";
 import { useInfiniteScrollTop } from "6pp";
@@ -22,12 +27,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { setIsFileMenu } from "../redux/reducers/misc";
 import { removeNewMessagesAlert } from "../redux/reducers/chat";
 import { TypingLoader } from "../components/layout/Loader";
+import { useNavigate } from "react-router-dom";
 
 const Chat = ({ chatId }) => {
-    const { user } = useSelector(state => state.auth)
+    const { user } = useSelector((state) => state.auth);
     const containerRef = useRef(null);
     const socket = getSocket();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
@@ -37,6 +44,8 @@ const Chat = ({ chatId }) => {
     const typingTimeout = useRef(null);
     const bottomRef = useRef(null);
     const [fileMenuAnchor, setFileMenuAnchor] = useState(null);
+
+
 
     const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
     const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
@@ -108,20 +117,22 @@ const Chat = ({ chatId }) => {
         [chatId]
     );
 
-    const alertListener = useCallback((content) => {
-        const messageForAlert = {
-            content,
-            sender: {
-                _id: Math.floor(Math.random() * 10 + 1).toString,
-                name: user.name,
-            },
-            chat: chatId,
-            createdAt: new Date().toISOString(),
-        };
+    const alertListener = useCallback(
+        (content) => {
+            const messageForAlert = {
+                content,
+                sender: {
+                    _id: Math.floor(Math.random() * 10 + 1).toString,
+                    name: user.name,
+                },
+                chat: chatId,
+                createdAt: new Date().toISOString(),
+            };
 
-        setMessages((prev) => [...prev, messageForAlert])
-
-    }, [chatId])
+            setMessages((prev) => [...prev, messageForAlert]);
+        },
+        [chatId]
+    );
 
     const eventHandler = {
         [ALERT]: alertListener,
@@ -150,6 +161,10 @@ const Chat = ({ chatId }) => {
         if (bottomRef.current)
             bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    useEffect(() => {
+        if (chatDetails.data?.chat) return navigate(`/chat/${chatId}`);
+    }, [chatDetails.data]);
 
     return chatDetails.isLoading ? (
         <Skeleton />
