@@ -20,6 +20,8 @@ const DeleteChatMenu = ({ dispatch, deleteMenuAnchor }) => {
         (state) => state.misc
     );
 
+    const { chatId } = selectedDeleteChat
+
     const navigate = useNavigate();
 
     const closeHandler = () => {
@@ -38,12 +40,12 @@ const DeleteChatMenu = ({ dispatch, deleteMenuAnchor }) => {
     const isGroup = selectedDeleteChat.groupChat;
     const deleteChatHandler = () => {
         closeHandler();
-        leaveGroup("Delete Chat...", selectedDeleteChat.chatId);
+        deleteChat("Delete Chat...", { chatId });
     };
 
     const leaveGroupHandler = () => {
         closeHandler();
-        deleteChat("Leaving Group...", selectedDeleteChat.chatId);
+        leaveGroup("Leaving Group...", { chatId });
     };
 
     useEffect(() => {
