@@ -346,6 +346,7 @@ const deleteChat = TryCatch(async (req, res, next) => {
     const chat = await Chat.findById(chatId);
 
     if (!chat) return next(new ErrorHandler("Chat not found", 404))
+    const members = chat.members;
 
     if (chat.groupChat && chat.creator.toString() !== req.user.toString())
         return next(
@@ -369,7 +370,6 @@ const deleteChat = TryCatch(async (req, res, next) => {
     await Promise.all([deleteFilesFromCloudinary(public_ids), chat.deleteOne(), Message.deleteMany({ chat: chatId })])
 
     emitEvent(req, REFETCH_CHATS, members);
-
     return res.status(200).json({
         success: true,
         messages: "Chat deleted successfully"
