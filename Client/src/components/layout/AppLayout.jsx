@@ -17,6 +17,7 @@ import {
     NEW_MESSAGE,
     NEW_MESSAGE_ALERT,
     NEW_REQUEST,
+    REFETCH_CHATS,
 } from "../../constants/event";
 import {
     incrementNotification,
@@ -37,7 +38,6 @@ const AppLayout = (WrappedComponent) => {
         const dispatch = useDispatch();
 
         const { isLoading, data, error, isError, refetch } = useMyChatsQuery("");
-        console.log(data)
         useErrors([{ error, isError }]);
 
         const handleDeleteChat = (e, _id, groupChat) => {
@@ -49,7 +49,7 @@ const AppLayout = (WrappedComponent) => {
             dispatch(isMobile(false));
         };
 
-        const newMessageAlertHandler = useCallback(
+        const newMessageAlertListener = useCallback(
             (data) => {
                 if (data.chatId === chatId) return;
                 dispatch(setNewMessagesAlert(data));
@@ -57,13 +57,16 @@ const AppLayout = (WrappedComponent) => {
             [chatId]
         );
 
-        const newRequestHandler = useCallback(() => {
+        const newRequestListener = useCallback(() => {
             dispatch(incrementNotification());
         }, [dispatch]);
 
+        const refetchListener = useCallback(() => { refetch() }, []);
+
         const eventHandler = {
-            [NEW_MESSAGE]: newMessageAlertHandler,
-            [NEW_REQUEST]: newRequestHandler,
+            [NEW_MESSAGE]: newMessageAlertListener,
+            [NEW_REQUEST]: newRequestListener,
+            [REFETCH_CHATS]: refetchListener,
         };
 
         useEffect(() => {
