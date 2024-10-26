@@ -18,12 +18,13 @@ import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from "../constants/even
 import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
 import { useErrors, useSocketEvents } from "../hooks/hooks";
 import { useInfiniteScrollTop } from "6pp";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setIsFileMenu } from "../redux/reducers/misc";
 import { removeNewMessagesAlert } from "../redux/reducers/chat";
 import { TypingLoader } from "../components/layout/Loader";
 
-const Chat = ({ chatId, user }) => {
+const Chat = ({ chatId }) => {
+    const { user } = useSelector(state => state.auth)
     const containerRef = useRef(null);
     const socket = getSocket();
     const dispatch = useDispatch();

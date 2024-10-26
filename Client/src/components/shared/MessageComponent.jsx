@@ -7,11 +7,13 @@ import { lightBlue } from "../../constants/color"
 import moment from "moment";
 import { fileFormat } from "../../lib/features";
 import RenderAttachment from "./RenderAttachment";
+import { useSelector } from "react-redux";
 
-const MessageComponent = ({ message, user }) => {
+const MessageComponent = ({ message }) => {
     const { sender, attachments = [], content, createdAt } = message;
-
+    const { user } = useSelector(state => state.auth)
     const sameSender = user?._id === sender?._id;
+    // console.log(sender?._id + " " + user?._id)
     const timeAgo = moment(createdAt).fromNow()
 
     return (
