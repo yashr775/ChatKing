@@ -8,10 +8,13 @@ import {
     Stack,
     Avatar,
     IconButton,
+    InputAdornment,
 } from "@mui/material";
 import { useInputValidation, useFileHandler } from "6pp";
 import {
-    CameraAlt as CameraAltIcon
+    CameraAlt as CameraAltIcon,
+    Visibility,
+    VisibilityOff,
 } from "@mui/icons-material";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponents";
 import { useState } from "react";
@@ -31,6 +34,9 @@ const Login = () => {
     const username = useInputValidation("", usernameValidator);
     const password = useInputValidation("");
     const dispatch = useDispatch();
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
     const avatar = useFileHandler("single");
 
@@ -39,10 +45,8 @@ const Login = () => {
     const handleSignUp = async (e) => {
         e.preventDefault();
 
-
         const toastId = toast.loading("Signing Up...");
         setIsLoading(true);
-
 
         const formData = new FormData();
 
@@ -54,13 +58,11 @@ const Login = () => {
         const config = {
             withCredentials: true,
             headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        }
-
+                "Content-Type": "multipart/form-data",
+            },
+        };
 
         try {
-
             const { data } = await axios.post(
                 `${server}/api/v1/user/new`,
                 formData,
@@ -71,7 +73,6 @@ const Login = () => {
             toast.success(data.message, {
                 id: toastId,
             });
-
         } catch (error) {
             toast.error(error?.response?.data?.message || "Something Went Wrong", {
                 id: toastId,
@@ -79,7 +80,6 @@ const Login = () => {
         } finally {
             setIsLoading(false);
         }
-
     };
 
     const handleLogIn = async (e) => {
@@ -94,15 +94,18 @@ const Login = () => {
         };
 
         try {
-            const { data } = await axios.post(`${server}/api/v1/user/login`, {
-                username: username.value,
-                password: password.value,
-            }, config)
-            dispatch(userExists(data.user))
+            const { data } = await axios.post(
+                `${server}/api/v1/user/login`,
+                {
+                    username: username.value,
+                    password: password.value,
+                },
+                config
+            );
+            dispatch(userExists(data.user));
             toast.success(data.message, {
                 id: toastId,
             });
-
         } catch (error) {
             toast.error(error?.response?.data?.message || "Something Went Wrong", {
                 id: toastId,
@@ -110,10 +113,7 @@ const Login = () => {
         } finally {
             setIsLoading(false);
         }
-
     };
-
-
 
     return (
         <div
@@ -163,11 +163,23 @@ const Login = () => {
                                     required
                                     fullWidth
                                     label="Password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     margin="normal"
                                     variant="outlined"
                                     valuue={password.value}
                                     onChange={password.changeHandler}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={handleTogglePasswordVisibility}
+                                                    edge="end"
+                                                >
+                                                    {!showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
                                 />
                                 <Button
                                     sx={{
@@ -277,11 +289,23 @@ const Login = () => {
                                     required
                                     fullWidth
                                     label="Password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     margin="normal"
                                     variant="outlined"
                                     value={password.value}
                                     onChange={password.changeHandler}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={handleTogglePasswordVisibility}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
                                 />
                                 <Button
                                     sx={{
