@@ -34,9 +34,7 @@ const Login = () => {
 
     const avatar = useFileHandler("single");
 
-    const toggleLogin = () => {
-        return setIsLogin((prev) => !prev);
-    };
+    const toggleLogin = () => setIsLogin((prev) => !prev);
 
     const handleSignUp = async (e) => {
         e.preventDefault();
@@ -179,6 +177,7 @@ const Login = () => {
                                     color="primary"
                                     type="submit"
                                     fullWidth
+                                    disabled={isLoading}
                                 >
                                     Login
                                 </Button>
@@ -292,6 +291,7 @@ const Login = () => {
                                     color="primary"
                                     type="submit"
                                     fullWidth
+                                    disabled={isLogin}
                                 >
                                     Sign Up
                                 </Button>

@@ -45,8 +45,6 @@ const Chat = ({ chatId }) => {
     const bottomRef = useRef(null);
     const [fileMenuAnchor, setFileMenuAnchor] = useState(null);
 
-
-
     const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
     const oldMessagesChunk = useGetMessagesQuery({ chatId, page });
     const members = chatDetails?.data?.chat?.members;
@@ -165,6 +163,10 @@ const Chat = ({ chatId }) => {
     useEffect(() => {
         if (chatDetails.data?.chat) return navigate(`/chat/${chatId}`);
     }, [chatDetails.data]);
+
+    useEffect(() => {
+        if (chatDetails.isError) return navigate("/");
+    }, [chatDetails.isError]);
 
     return chatDetails.isLoading ? (
         <Skeleton />

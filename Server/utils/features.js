@@ -35,7 +35,7 @@ const sendToken = (res, user, code, message) => {
     return res
         .status(code)
         .cookie("chatKingToken", token, cookieOption)
-        .json({ success: true, message });
+        .json({ success: true, user, message });
 };
 
 const emitEvent = (req, event, users, data) => {

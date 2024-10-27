@@ -8,6 +8,7 @@ import moment from "moment";
 import { fileFormat } from "../../lib/features";
 import RenderAttachment from "./RenderAttachment";
 import { useSelector } from "react-redux";
+import { motion } from "framer-motion"
 
 const MessageComponent = ({ message }) => {
     const { sender, attachments = [], content, createdAt } = message;
@@ -17,7 +18,9 @@ const MessageComponent = ({ message }) => {
     const timeAgo = moment(createdAt).fromNow()
 
     return (
-        <div
+        <motion.div
+            initial={{ opacity: 0, x: "-100%" }}
+            whileInView={{ opacity: 1, x: 0 }}
             style={{
                 alignSelf: sameSender ? "flex-end" : "flex-start",
                 backgroundColor: "white",
@@ -42,7 +45,7 @@ const MessageComponent = ({ message }) => {
                 </Box>
             })}
             <Typography variant="caption" color={"text.secondry"}>{timeAgo}</Typography>
-        </div>
+        </motion.div>
     );
 };
 
