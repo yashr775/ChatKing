@@ -1,20 +1,25 @@
-import { Container, Paper, Typography, TextField, Button } from "@mui/material"
+import { Container, Paper, Typography, TextField, Button, InputAdornment, IconButton } from "@mui/material"
 import { bgGradient } from "../../constants/color"
 import { useInputValidation } from "6pp";
 import { Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { adminLogin } from "../../redux/thunks/admin";
+import { useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const isAdmin = false;
 
 const AdminLogin = () => {
+    const [showPassword, setShowPassword] = useState(false);
+    const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
+    const dispatch = useDispatch()
 
-
+    const { isAdmin } = useSelector(state => state.auth)
     const secretKey = useInputValidation("");
 
     const submitHandler = (e) => {
         e.preventDefault();
-        console.log("submit")
+        dispatch(adminLogin(secretKey.value))
     }
-
     if (isAdmin) return <Navigate to="/admin/dashboard" />
 
     return (
@@ -54,11 +59,24 @@ const AdminLogin = () => {
                             required
                             fullWidth
                             label="Secret Key"
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             margin="normal"
                             variant="outlined"
                             value={secretKey.value}
                             onChange={secretKey.changeHandler}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={handleTogglePasswordVisibility}
+                                            edge="end"
+                                        >
+                                            {!showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+
                         />
 
                         <Button
@@ -79,4 +97,4 @@ const AdminLogin = () => {
     )
 }
 
-export default AdminLogin
+export default AdminLogin;
