@@ -1,6 +1,11 @@
 import { TryCatch } from "../middlewares/errors.js";
 import { User } from "../models/user.js";
-import { cookieOption, emitEvent, sendToken, uploadFilesToCloudinary } from "../utils/features.js";
+import {
+    cookieOption,
+    emitEvent,
+    sendToken,
+    uploadFilesToCloudinary,
+} from "../utils/features.js";
 import { compare } from "bcrypt";
 import { ErrorHandler } from "../utils/utility.js";
 import { Chat } from "../models/chat.js";
@@ -13,15 +18,15 @@ const newUser = TryCatch(async (req, res) => {
 
     const file = req.file;
 
-    if (!file) return (new ErrorHandler("Please upload avatar", 200))
+    if (!file) return new ErrorHandler("Please upload avatar", 200);
 
-    const result = await uploadFilesToCloudinary([file])
+    const result = await uploadFilesToCloudinary([file]);
 
     const avatar = {
         public_id: result[0].public_id,
         url: result[0].url,
     };
-    console.log(avatar.public_id)
+    console.log(avatar.public_id);
 
     const user = await User.create({
         name,
@@ -36,7 +41,6 @@ const newUser = TryCatch(async (req, res) => {
 const login = TryCatch(async (req, res, next) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username }).select("+password");
-
     if (!user) {
         return next(new ErrorHandler("Invalid credentials", 404));
     }
@@ -91,7 +95,7 @@ const searchUser = TryCatch(async (req, res, next) => {
 
 const sendFriendRequest = TryCatch(async (req, res, next) => {
     const { userId } = req.body;
-    console.log("1")
+    console.log("1");
 
     const request = await Request.findOne({
         $or: [
@@ -101,7 +105,6 @@ const sendFriendRequest = TryCatch(async (req, res, next) => {
     });
 
     if (request) return next(new ErrorHandler("Request already sent", 400));
-
 
     await Request.create({
         sender: req.user,

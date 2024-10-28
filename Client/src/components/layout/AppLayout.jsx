@@ -17,6 +17,7 @@ import {
     NEW_MESSAGE,
     NEW_MESSAGE_ALERT,
     NEW_REQUEST,
+    ONLINE_USERS,
     REFETCH_CHATS,
 } from "../../constants/event";
 import {
@@ -24,7 +25,10 @@ import {
     setNewMessagesAlert,
 } from "../../redux/reducers/chat";
 import { getOrSaveFromStorage } from "../../lib/features";
-import { setIsDeleteMenu, setSelectedDeleteChat } from "../../redux/reducers/misc";
+import {
+    setIsDeleteMenu,
+    setSelectedDeleteChat,
+} from "../../redux/reducers/misc";
 import DeleteChatMenu from "../dialogs/DeleteChatMenu";
 const AppLayout = (WrappedComponent) => {
     return (props) => {
@@ -73,10 +77,15 @@ const AppLayout = (WrappedComponent) => {
             navigate("/");
         }, [refetch, navigate]);
 
+        const onlineUsersListener = useCallback((data) => {
+            setOnlineUsers(data)
+        }, []);
+
         const eventHandler = {
             [NEW_MESSAGE]: newMessageAlertListener,
             [NEW_REQUEST]: newRequestListener,
             [REFETCH_CHATS]: refetchListener,
+            [ONLINE_USERS]: onlineUsersListener,
         };
 
         useEffect(() => {
@@ -129,6 +138,7 @@ const AppLayout = (WrappedComponent) => {
                                 onlineUsers={onlineUsers}
                                 user={user}
                                 newMessagesAlert={newMessagesAlert}
+                                onlineUSers={onlineUsers}
                             />
                         )}
                     </Grid>

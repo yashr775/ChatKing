@@ -9,6 +9,8 @@ import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import {
+    CHAT_JOINED,
+    CHAT_LEFT,
     NEW_MESSAGE,
     NEW_MESSAGE_ALERT,
     ONLINE_USERS,
@@ -39,6 +41,7 @@ app.set("io", io);
 const PORT = process.env.PORT || 3000;
 const adminSecretKey = process.env.ADMIN_SECRET_KEY || "This is secret";
 const userSocketIDs = new Map();
+const onlineUsers = new Set()
 
 app.use(express.json());
 app.use(cookieParser());
@@ -108,8 +111,26 @@ io.on("connection", (socket) => {
         const membersSocket = getSockets(members);
         socket.to(membersSocket).emit(STOP_TYPING, { chatId });
     });
+
+    socket.on(CHAT_JOINED, ({ userId, members }) => {
+        onlineUsers.add(userId.toString());
+
+        const membersSocket = getSockets(members);
+        io.to(membersSocket).emit(ONLINE_USERS, Array.from(onlineUsers));
+
+    });
+
+    socket.on(CHAT_LEFT, ({ userId, members }) => {
+        onlineUsers.delete(userId.toString());
+
+        const membersSocket = getSockets(members);
+        io.to(membersSocket).emit(ONLINE_USERS, Array.from(onlineUsers));
+    });
+
     socket.on("disconnect", () => {
         userSocketIDs.delete(user._id.toString());
+        onlineUsers.delete(user._id.toString());
+        socket.broadcast.emit(ONLINE_USERS, Array.from(onlineUsers));
     });
 });
 

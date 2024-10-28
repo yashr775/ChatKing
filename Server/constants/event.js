@@ -9,6 +9,9 @@ const ONLINE_USERS = "ONLINE_USERS";
 const START_TYPING = "START_TYPING";
 const STOP_TYPING = "STOP_TYPING";
 
+const CHAT_JOINED = "CHAT_JOINED";
+const CHAT_LEFT = "CHAT_LEFT"
+
 export {
     ALERT,
     REFETCH_CHATS,
@@ -18,5 +21,7 @@ export {
     NEW_REQUEST,
     ONLINE_USERS,
     START_TYPING,
-    STOP_TYPING
+    STOP_TYPING,
+    CHAT_JOINED,
+    CHAT_LEFT,
 };

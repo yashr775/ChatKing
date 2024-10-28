@@ -16,6 +16,8 @@ import MessageComponent from "../components/shared/MessageComponent";
 import { getSocket } from "../socket";
 import {
     ALERT,
+    CHAT_JOINED,
+    CHAT_LEFT,
     NEW_MESSAGE,
     START_TYPING,
     STOP_TYPING,
@@ -28,6 +30,7 @@ import { setIsFileMenu } from "../redux/reducers/misc";
 import { removeNewMessagesAlert } from "../redux/reducers/chat";
 import { TypingLoader } from "../components/layout/Loader";
 import { useNavigate } from "react-router-dom";
+
 
 const Chat = ({ chatId }) => {
     const { user } = useSelector((state) => state.auth);
@@ -147,11 +150,13 @@ const Chat = ({ chatId }) => {
 
     useEffect(() => {
         dispatch(removeNewMessagesAlert(chatId));
+        socket.emit(CHAT_JOINED, { userId: user._id, members })
         return () => {
             setMessages([]);
             setMessage("");
             setOldMessages([]);
             setPage(1);
+            socket.emit(CHAT_LEFT, { userId: user._id, members })
         };
     }, [chatId]);
 
