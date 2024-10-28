@@ -1,26 +1,40 @@
-import { Container, Paper, Typography, TextField, Button, InputAdornment, IconButton } from "@mui/material"
-import { bgGradient } from "../../constants/color"
+import {
+    Container,
+    Paper,
+    Typography,
+    TextField,
+    Button,
+    InputAdornment,
+    IconButton,
+} from "@mui/material";
+import { bgGradient } from "../../constants/color";
 import { useInputValidation } from "6pp";
 import { Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { adminLogin } from "../../redux/thunks/admin";
-import { useState } from "react";
+import { adminLogin, getAdmin } from "../../redux/thunks/admin";
+import { useEffect, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-
 
 const AdminLogin = () => {
     const [showPassword, setShowPassword] = useState(false);
     const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
-    const { isAdmin } = useSelector(state => state.auth)
+    const { isAdmin } = useSelector((state) => state.auth);
     const secretKey = useInputValidation("");
 
     const submitHandler = (e) => {
         e.preventDefault();
-        dispatch(adminLogin(secretKey.value))
+        dispatch(adminLogin(secretKey.value));
+    };
+
+    useEffect(() => {
+        dispatch(getAdmin());
+    }, [dispatch]);
+
+    if (isAdmin) {
+        return <Navigate to="/admin/dashboard" />;
     }
-    if (isAdmin) return <Navigate to="/admin/dashboard" />
 
     return (
         <div
@@ -76,7 +90,6 @@ const AdminLogin = () => {
                                     </InputAdornment>
                                 ),
                             }}
-
                         />
 
                         <Button
@@ -94,7 +107,7 @@ const AdminLogin = () => {
                 </Paper>
             </Container>
         </div>
-    )
-}
+    );
+};
 
 export default AdminLogin;

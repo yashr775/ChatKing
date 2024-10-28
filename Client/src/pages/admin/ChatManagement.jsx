@@ -1,11 +1,13 @@
 /* eslint-disable no-unused-vars */
 import AdminLayout from "../../components/layout/AdminLayout";
-import { Stack, Avatar } from "@mui/material";
+import { Stack, Avatar, Skeleton } from "@mui/material";
 import AvatarCard from "../../components/shared/AvatarCard";
 import { useState, useEffect } from "react";
 import Table from "../../components/shared/Table";
-import { dashboardData as data } from "../../constants/sampleData";
 import { transformImage } from "../../lib/features";
+import { useFetchData } from "6pp";
+import { server } from "../../constants/config";
+import { useErrors } from "../../hooks/hooks";
 
 const columns = [
     {
@@ -72,6 +74,13 @@ const columns = [
 
 const ChatManagement = () => {
     const [rows, setRows] = useState([]);
+    const { loading, data, error } = useFetchData(
+        `${server}/api/v1/admin/chats`,
+        "dashboard-chats"
+    );
+
+    const { stats } = data || {};
+    useErrors([{ isError: error, error }]);
 
     useEffect(() => {
         if (data) {
@@ -92,8 +101,11 @@ const ChatManagement = () => {
 
     return (
         <AdminLayout>
-            {" "}
-            <Table heading={"All Chats"} columns={columns} rows={rows} />
+            {loading ? (
+                <Skeleton height={"100vh"} />
+            ) : (
+                <Table heading={"All Chats"} columns={columns} rows={rows} />
+            )}
         </AdminLayout>
     );
 };

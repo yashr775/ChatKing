@@ -3,7 +3,6 @@ import { server } from "../../constants/config";
 import axios from "axios";
 
 const adminLogin = createAsyncThunk("admin/login", async (secretKey) => {
-
     try {
         const config = {
             withCredentials: true,
@@ -19,10 +18,31 @@ const adminLogin = createAsyncThunk("admin/login", async (secretKey) => {
         );
 
         return data.message;
-
     } catch (error) {
-        throw error.response.data.message
+        throw error.response.data.message;
     }
 });
 
-export { adminLogin };
+const getAdmin = createAsyncThunk("admin/getAdmin", async () => {
+    try {
+        const { data } = await axios(`${server}/api/v1/admin/`, {
+            withCredentials: true,
+        });
+        return data.admin;
+    } catch (error) {
+        throw error.response.data.message;
+    }
+});
+
+const adminLogout = createAsyncThunk("admin/logout", async () => {
+    try {
+        const { data } = await axios(`${server}/api/v1/admin/logout`, {
+            withCredentials: true,
+        });
+        return data.message;
+    } catch (error) {
+        throw error.response.data.message;
+    }
+});
+
+export { adminLogin, getAdmin, adminLogout };

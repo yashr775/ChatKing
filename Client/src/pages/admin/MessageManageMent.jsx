@@ -1,16 +1,15 @@
 /* eslint-disable no-unused-vars */
-import { Stack, Avatar, Box } from "@mui/material";
+import { Stack, Avatar, Box, Skeleton } from "@mui/material";
 import AvatarCard from "../../components/shared/AvatarCard";
 import Table from "../../components/shared/Table";
 import AdminLayout from "../../components/layout/AdminLayout";
 import { useEffect, useState } from "react";
 import { fileFormat, transformImage } from "../../lib/features";
 import RenderAttachment from "../../components/shared/RenderAttachment";
-import { dashboardData as data } from "../../constants/sampleData";
-import moment from "moment"
-
-
-
+import moment from "moment";
+import { useFetchData } from "6pp";
+import { server } from "../../constants/config";
+import { useErrors } from "../../hooks/hooks";
 
 const columns = [
     {
@@ -35,7 +34,6 @@ const columns = [
                     return (
                         <Box key={i.url}>
                             <a
-
                                 href={url}
                                 download
                                 target="_blank"
@@ -90,10 +88,14 @@ const columns = [
     },
 ];
 
-
 const MessageManagement = () => {
-
     const [rows, setRows] = useState([]);
+    const { loading, data, error } = useFetchData(
+        `${server}/api/v1/admin/messages`,
+        "dashboard-messages"
+    );
+
+    useErrors([{ isError: error, error }]);
 
     useEffect(() => {
         if (data) {
@@ -113,14 +115,18 @@ const MessageManagement = () => {
 
     return (
         <AdminLayout>
-            <Table
-                heading={"All Messages"}
-                columns={columns}
-                rows={rows}
-                rowHeight={200}
-            />
+            {loading ? (
+                <Skeleton height={"100vh"} />
+            ) : (
+                <Table
+                    heading={"All Messages"}
+                    columns={columns}
+                    rows={rows}
+                    rowHeight={200}
+                />
+            )}
         </AdminLayout>
-    )
-}
+    );
+};
 
-export default MessageManagement
+export default MessageManagement;

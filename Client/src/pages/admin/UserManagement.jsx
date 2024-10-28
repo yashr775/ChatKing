@@ -1,10 +1,13 @@
 /* eslint-disable no-unused-vars */
 import AdminLayout from "../../components/layout/AdminLayout";
 import Table from "../../components/shared/Table";
-import { Avatar } from "@mui/material";
+import { Avatar, Skeleton } from "@mui/material";
 import { useState, useEffect } from "react";
 import { transformImage } from "../../lib/features";
-import { dashboardData as data } from "../../constants/sampleData";
+
+import { useFetchData } from "6pp";
+import { server } from "../../constants/config";
+import { useErrors } from "../../hooks/hooks";
 
 const columns = [
     {
@@ -49,11 +52,14 @@ const columns = [
     },
 ];
 
-
 const UserManagement = () => {
+    const [rows, setRows] = useState([]);
+    const { loading, data, error } = useFetchData(
+        `${server}/api/v1/admin/users`,
+        "dashboard-users"
+    );
 
-    const [rows, setRows] = useState([])
-
+    useErrors([{ isError: error, error }]);
 
     useEffect(() => {
         if (data) {
@@ -65,11 +71,15 @@ const UserManagement = () => {
                 }))
             );
         }
-    }, []);
+    }, [data]);
 
     return (
         <AdminLayout>
-            <Table heading={"All Users"} rows={rows} columns={columns} />
+            {loading ? (
+                <Skeleton height={"100vh"} />
+            ) : (
+                <Table heading={"All Users"} rows={rows} columns={columns} />
+            )}
         </AdminLayout>
     );
 };
