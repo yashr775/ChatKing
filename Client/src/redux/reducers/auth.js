@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createSlice } from "@reduxjs/toolkit";
 import { adminLogin, adminLogout, getAdmin } from "../thunks/admin";
 import toast from "react-hot-toast";
@@ -38,12 +39,14 @@ const authSlice = createSlice({
                 } else {
                     state.isAdmin = false;
                 }
-            }).addCase(adminLogout.fulfilled, (state, action) => {
+            }).addCase(getAdmin.rejected, (state, action) => {
+                state.isAdmin = false;
+            })
+            .addCase(adminLogout.fulfilled, (state, action) => {
                 state.isAdmin = false;
                 toast.success(action.payload);
             }).addCase(adminLogout.rejected, (state, action) => {
                 state.isAdmin = true;
-                console.log(action.error.message)
                 toast.error(action.error.message);
             });
     },

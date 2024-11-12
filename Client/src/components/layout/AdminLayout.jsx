@@ -21,7 +21,7 @@ import {
 } from "@mui/icons-material";
 import { useState } from "react";
 import { grayColor } from "../../constants/color";
-import { Link as LinkComponent, Navigate, useLocation } from "react-router-dom";
+import { Link as LinkComponent, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { matBlack } from "../../constants/color";
 import { useDispatch, useSelector } from "react-redux";
 import { adminLogout } from "../../redux/thunks/admin";
@@ -35,7 +35,6 @@ const Link = styled(LinkComponent)`
     color: rgba(0, 0, 0, 0.54);
   }
 `;
-
 const adminTabs = [
     {
         name: "Dashboard",
@@ -117,7 +116,6 @@ const AdminLayout = ({ children }) => {
     };
 
     if (!isAdmin) return <Navigate to="/admin" />;
-
     return (
         <Grid container minHeight={"100vh"}>
             <Box

@@ -25,7 +25,7 @@ const adminLogin = createAsyncThunk("admin/login", async (secretKey) => {
 
 const getAdmin = createAsyncThunk("admin/getAdmin", async () => {
     try {
-        const { data } = await axios(`${server}/api/v1/admin/`, {
+        const { data } = await axios.get(`${server}/api/v1/admin/`, {
             withCredentials: true,
         });
         return data.admin;
@@ -36,7 +36,7 @@ const getAdmin = createAsyncThunk("admin/getAdmin", async () => {
 
 const adminLogout = createAsyncThunk("admin/logout", async () => {
     try {
-        const { data } = await axios(`${server}/api/v1/admin/logout`, {
+        const { data } = await axios.get(`${server}/api/v1/admin/logout`, {
             withCredentials: true,
         });
         return data.message;

@@ -20,7 +20,7 @@ const AdminLogin = () => {
     const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
     const dispatch = useDispatch();
 
-    const { isAdmin } = useSelector((state) => state.auth);
+    const { isAdmin, loader } = useSelector((state) => state.auth);
     const secretKey = useInputValidation("");
 
     const submitHandler = (e) => {
@@ -31,11 +31,12 @@ const AdminLogin = () => {
     useEffect(() => {
         dispatch(getAdmin());
     }, [dispatch]);
+    if (loader) return <div>Loading...</div>
 
     if (isAdmin) {
         return <Navigate to="/admin/dashboard" />;
     }
-
+    console.log("4324234234")
     return (
         <div
             style={{
